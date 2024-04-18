@@ -3,7 +3,10 @@
 
 %{
 #include <stdio.h>
-#include "tokens.h"
+
+int yylex(void);
+int yyerror(char* s);
+#include "y.tab.h"
 #include "hash.h"
 int running = 1;
 int lineNumber = 0;
@@ -87,5 +90,6 @@ int yywrap() {
 int isRunning() {
     return running;
 }
+#include "y.tab.c"
 #include "main.c"
 #include "hash.c"
