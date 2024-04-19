@@ -9,7 +9,7 @@ int yyerror(char* s);
 #include "y.tab.h"
 #include "hash.h"
 int running = 1;
-int lineNumber = 0;
+int lineNumber = 1;
 %}
 
 
@@ -60,6 +60,8 @@ int lineNumber = 0;
 "read"                      { return KW_READ; }
 "print"                     { return KW_PRINT; }
 "return"                    { return KW_RETURN; }
+"true"                      { return LIT_TRUE; }
+"false"                     { return LIT_FALSE; }
 
 [a-zA-Z_][a-zA-Z0-9_]*      { return TK_IDENTIFIER; }
 

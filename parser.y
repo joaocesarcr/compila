@@ -23,6 +23,9 @@
 
 %left '+' '-'
 %left '*' '/'
+%left '<' '>' OPERATOR_DIF OPERATOR_EQ OPERATOR_GE OPERATOR_LE
+%left '&' '|'
+%left KW_IF
 
 
 %% 
@@ -48,9 +51,12 @@ declaracao_vetor: tipo TK_IDENTIFIER '[' LIT_INT ']' ':' valores_iniciais
 declaracao_funcao: tipo TK_IDENTIFIER '(' lista_parametros ')' bloco
                   ;
 
+              
 lista_parametros: 
                 | lista_parametros ',' parametro
+                | parametro
                 ;
+
 
 parametro: tipo TK_IDENTIFIER
          ;
@@ -66,10 +72,11 @@ valor_inicial: LIT_INT
              | LIT_REAL
              | LIT_FALSE
              | LIT_TRUE
+             | LIT_STRING
              ;
 
 valores_iniciais: valor_inicial
-                | valores_iniciais LIT_STRING
+                | valores_iniciais valor_inicial
                 ;
 
 bloco: '{' lista_comandos '}'
@@ -81,15 +88,21 @@ lista_comandos: /* vazio */
 
 comando: atribuicao
        | controle_fluxo
-       | KW_READ TK_IDENTIFIER ';'
-       | KW_PRINT expressao ';'
+       | KW_READ tipo TK_IDENTIFIER ';'
+       | KW_PRINT tipo expressao ';'
+       | KW_PRINT LIT_STRING ';'
        | KW_RETURN expressao ';'
        | bloco
        | ';'
        ;
 
 atribuicao: TK_IDENTIFIER '=' expressao ';'
+          | vetor '=' expressao ';'
           ;
+
+vetor: TK_IDENTIFIER'['LIT_INT']'
+     | TK_IDENTIFIER'['TK_IDENTIFIER']'
+     ;
 
 controle_fluxo: KW_IF '(' expressao ')' comando
               | KW_IF '(' expressao ')' comando KW_ELSE comando
@@ -99,18 +112,34 @@ expressao: expressao '+' expressao
          | expressao '-' expressao
          | expressao '*' expressao
          | expressao '/' expressao
+         | expressao '<' expressao
+         | expressao '>' expressao
+         | expressao '|' expressao
+         | expressao '&' expressao
          | expressao OPERATOR_LE expressao
          | expressao OPERATOR_GE expressao
          | expressao OPERATOR_EQ expressao
          | expressao OPERATOR_DIF expressao
          | '(' expressao ')'
          | TK_IDENTIFIER
+         | vetor
          | LIT_INT
          | LIT_CHAR
          | LIT_REAL
          | LIT_FALSE
          | LIT_TRUE
+         | chamada_funcao
          ;
+
+chamada_funcao: TK_IDENTIFIER '(' lista_chamada ')' 
+              ;
+
+lista_chamada:
+             | expressao ',' lista_chamada
+             | expressao
+             ;
+
+
 %% 
 int yyerror() {
   fprintf(stderr,"Syntax error in line %d\n", getLineNumber());

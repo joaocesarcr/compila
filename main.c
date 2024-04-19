@@ -1,3 +1,8 @@
+/* Compiladores 2024/01 - Etapa 2
+ * João César de Paula Criscolo  - 00304342
+ * Prof. Marcelo Johann
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include "y.tab.h"
@@ -13,8 +18,10 @@ void initMe(void);
 
 int main(int argc, char** argv) {
   hashInit();
-  yyin = fopen(argv[1], "r");
+  if (argc) 
+      yyin = fopen(argv[1], "r");
   yyparse();
   printf("Compilação OK\n");
+  exit(0);
   }
 
