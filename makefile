@@ -9,10 +9,10 @@
 
 etapa2: lex.yy.c
 	yacc -v -d parser.y 
-	gcc -o etapa2 lex.yy.c ast.c hash.c
+	gcc -o etapa2 lex.yy.c -v
 
 lex.yy.c: scanner.l
-	lex scanner.l
+	lex scanner.l 
 
 clean:
 	rm lex.yy.c etapa2 y.tab.h y.tab.c 

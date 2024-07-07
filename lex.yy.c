@@ -2094,4 +2094,5 @@ int isRunning() {
 #include "y.tab.c"
 #include "main.c"
 #include "hash.c"
+#include "ast.c"
 

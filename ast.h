@@ -13,7 +13,6 @@ typedef enum {
     NODE_FUNC_DECLARATION,
     NODE_PARAM_LIST,
     NODE_PARAM,
-    NODE_TYPE,
     NODE_INITIAL_VALUE,
     NODE_VALUES_LIST,
     NODE_BLOCK,
@@ -24,7 +23,38 @@ typedef enum {
     NODE_CONTROL_FLOW,
     NODE_EXPRESSION,
     NODE_FUNC_CALL,
-    NODE_ARGS_LIST
+    NODE_ARGS_LIST,
+    NODE_ADDITION,
+    NODE_SUBTRACTION,
+    NODE_MULTIPLICATION,
+    NODE_DIVISION,
+    NODE_LESS_THAN,
+    NODE_GREATER_THAN,
+    NODE_LOGICAL_OR,
+    NODE_LOGICAL_AND,
+    NODE_LESS_THAN_EQUAL,
+    NODE_GREATER_THAN_EQUAL,
+    NODE_EQUAL,
+    NODE_NOT_EQUAL,
+    NODE_LITERAL_INT,
+    NODE_LITERAL_CHAR,
+    NODE_LITERAL_REAL,
+    NODE_LITERAL_FALSE,
+    NODE_LITERAL_TRUE,
+    NODE_LITERAL_STRING,
+    NODE_TOKEN_ERROR,
+    NODE_TOKEN_IDENTIFIER,
+    NODE_TYPE,
+    NODE_KW_CHAR,
+    NODE_KW_READ,
+    NODE_KW_INT,
+    NODE_KW_FLOAT,
+    NODE_KW_BOOL,
+    NODE_KW_PRINT,
+    NODE_KW_RETURN,
+    NODE_KW_IF,
+    NODE_KW_IF_ELSE,
+    NODE_KW_WHILE,
 } NodeType;
 
 typedef struct ASTNode_s {
@@ -34,6 +64,6 @@ typedef struct ASTNode_s {
     HASH_NODE value;  // For identifiers, literals, etc.
 } ASTNode;
 
-ASTNode* createNode(NodeType type, ASTNode* children[MAX_CHILDREN], HASH_NODE value);
+ASTNode* createNode(NodeType type, ASTNode* children[MAX_CHILDREN], HASH_NODE* value);
 
 #endif
