@@ -8,8 +8,8 @@
 #
 
 etapa2: lex.yy.c
-	yacc -d parser.y 
-	gcc -o etapa2 lex.yy.c
+	yacc -v -d parser.y 
+	gcc -o etapa2 lex.yy.c ast.c hash.c
 
 lex.yy.c: scanner.l
 	lex scanner.l

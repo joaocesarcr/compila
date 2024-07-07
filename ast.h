@@ -1,3 +1,8 @@
+#ifndef AST_HEADER
+#define AST_HEADER
+
+#include "hash.h"
+
 #define MAX_CHILDREN 5
 typedef enum {
     NODE_PROGRAM,
@@ -22,20 +27,13 @@ typedef enum {
     NODE_ARGS_LIST
 } NodeType;
 
-typedef struct ASTNode {
+typedef struct ASTNode_s {
     NodeType type;
-    struct ASTNode* children[MAX_CHILDREN];
+    struct ASTNode_s* children[MAX_CHILDREN];
     // Additional fields can be added as necessary
-    
-    char* value;  // For identifiers, literals, etc.
+    HASH_NODE value;  // For identifiers, literals, etc.
 } ASTNode;
 
-ASTNode* createNode(NodeType type, ASTNode* children[MAX_CHILDREN], char* value) {
-    ASTNode* node = (ASTNode*)malloc(sizeof(ASTNode));
-    node->type = type;
-    for (int i = 0; i < MAX_CHILDREN; ++i) {
-        node->children[i] = children[i];
-    }
-    node->value = value ? strdup(value) : NULL;
-    return node;
-}
+ASTNode* createNode(NodeType type, ASTNode* children[MAX_CHILDREN], HASH_NODE value);
+
+#endif

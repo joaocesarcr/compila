@@ -17,6 +17,3 @@ HASH_NODE *hashInsert(int type, char*text);
 void hashPrint(void);
 
 #endif
-
-
-// "\/\*"[^*]*\*+([^/*][^*]*\*+)*\/      ; /* Ignore multi-line comments */
