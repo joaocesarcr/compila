@@ -1,3 +1,6 @@
+%{
+%}
+
 %token KW_CHAR           
 %token KW_INT            
 %token KW_FLOAT          
@@ -26,14 +29,14 @@
 %left '<' '>' OPERATOR_DIF OPERATOR_EQ OPERATOR_GE OPERATOR_LE
 %left '&' '|'
 %left KW_IF
+%right LOWER_THAN_ELSE ELSE
 
-
-%% 
+%%
 programa: lista_declaracoes
         ;
 
 lista_declaracoes: declaracao
-                | lista_declaracoes declaracao
+                |  lista_declaracoes declaracao
                 ;
 
 declaracao: declaracao_variavel ';'
@@ -42,21 +45,19 @@ declaracao: declaracao_variavel ';'
           ;
 
 declaracao_variavel: tipo TK_IDENTIFIER ':' valor_inicial
-           ;
+                   ;
 
 declaracao_vetor: tipo TK_IDENTIFIER '[' LIT_INT ']' ':' valores_iniciais
-          | tipo TK_IDENTIFIER '[' LIT_INT ']'
-          ;
-
-declaracao_funcao: tipo TK_IDENTIFIER '(' lista_parametros ')' bloco
-                  ;
-
-              
-lista_parametros: 
-                | lista_parametros ',' parametro
-                | parametro
+                | tipo TK_IDENTIFIER '[' LIT_INT ']'
                 ;
 
+declaracao_funcao: tipo TK_IDENTIFIER '(' lista_parametros ')' bloco
+                 ;
+
+lista_parametros: 
+                | parametro ',' lista_parametros 
+                | parametro
+                ;
 
 parametro: tipo TK_IDENTIFIER
          ;
@@ -104,8 +105,8 @@ vetor: TK_IDENTIFIER'['LIT_INT']'
      | TK_IDENTIFIER'['TK_IDENTIFIER']'
      ;
 
-controle_fluxo: KW_IF '(' expressao ')' comando
-              | KW_IF '(' expressao ')' comando KW_ELSE comando
+controle_fluxo: KW_IF '(' expressao ')' comando %prec LOWER_THAN_ELSE
+              | KW_IF '(' expressao ')' comando KW_ELSE comando %prec ELSE
               | KW_WHILE '(' expressao ')' comando
               ;
 expressao: expressao '+' expressao
@@ -138,7 +139,6 @@ lista_chamada:
              | expressao ',' lista_chamada
              | expressao
              ;
-
 
 %% 
 int yyerror() {
