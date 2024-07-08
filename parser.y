@@ -18,21 +18,6 @@ ASTNode* root;
 %type <astnode> programa lista_declaracoes declaracao declaracao_variavel declaracao_vetor declaracao_funcao
 %type <astnode> lista_parametros parametro tipo valor_inicial valores_iniciais bloco lista_comandos
 %type <astnode> comando atribuicao vetor controle_fluxo expressao chamada_funcao lista_chamada
-
-%token <token> KW_CHAR           
-%token <token> KW_INT            
-%token <token> KW_FLOAT          
-%token <token> KW_BOOL           
-%token <token> KW_IF             
-%token <token> KW_ELSE           
-%token <token> KW_WHILE          
-%token <token> KW_READ           
-%token <token> KW_PRINT          
-%token <token> KW_RETURN         
-%token <token> OPERATOR_LE       
-%token <token> OPERATOR_GE       
-%token <token> OPERATOR_EQ       
-%token <token> OPERATOR_DIF      
 %token <astnode> ','
 %token <astnode> ';'
 %token <astnode> ':'
@@ -54,6 +39,21 @@ ASTNode* root;
 %token <astnode> '|'
 %token <astnode> '~'
 %token <astnode> '.'
+
+%token <token> KW_CHAR           
+%token <token> KW_INT            
+%token <token> KW_FLOAT          
+%token <token> KW_BOOL           
+%token <token> KW_IF             
+%token <token> KW_ELSE           
+%token <token> KW_WHILE          
+%token <token> KW_READ           
+%token <token> KW_PRINT          
+%token <token> KW_RETURN         
+%token <token> OPERATOR_LE       
+%token <token> OPERATOR_GE       
+%token <token> OPERATOR_EQ       
+%token <token> OPERATOR_DIF      
 
 %token <symbol> TK_IDENTIFIER     
 %token <symbol> LIT_INT           
@@ -87,8 +87,9 @@ declaracao: declaracao_variavel ';' { $$ = $1; }
           | declaracao_funcao { $$ = $1; }
           ;
 
-declaracao_variavel: tipo TK_IDENTIFIER ':' valor_inicial { $$ = createNode(NODE_VAR_DECLARATION, (ASTNode*[]){$1, $3, NULL}, $2); }
+declaracao_variavel: tipo TK_IDENTIFIER ':' valor_inicial { $$ = createNode(NODE_VAR_DECLARATION, (ASTNode*[]){$1, createNode(NODE_TOKEN_IDENTIFIER,NULL,$2),$3}, NULL); }
                    ;
+
 
 declaracao_vetor: tipo TK_IDENTIFIER '[' LIT_INT ']' ':' valores_iniciais { $$ = createNode(NODE_VECTOR_DECLARATION, (ASTNode*[]){$1, createNode(NODE_LITERAL_INT,NULL,$2),createNode(NODE_LITERAL_INT,NULL,$4), $6}, NULL); }
                 | tipo TK_IDENTIFIER '[' LIT_INT ']' { $$ = createNode(NODE_VECTOR_DECLARATION, (ASTNode*[]){$1,  createNode(NODE_TOKEN_IDENTIFIER,NULL,$2),createNode(NODE_LITERAL_INT,NULL,$4), NULL}, NULL); }
@@ -168,11 +169,11 @@ expressao: expressao '+' expressao { $$ = createNode(NODE_ADDITION, (ASTNode*[])
          | '(' expressao ')' { $$ = $2;  }
          | TK_IDENTIFIER { $$ = createNode(NODE_EXPRESSION, NULL, $1); }
          | vetor { $$ = $1; }
-         | LIT_INT { $$ = createNode(NODE_EXPRESSION, NULL, $1); }
-         | LIT_CHAR { $$ = createNode(NODE_EXPRESSION, NULL, $1); }
-         | LIT_REAL { $$ = createNode(NODE_EXPRESSION, NULL, $1); }
-         | LIT_FALSE { $$ = createNode(NODE_EXPRESSION, NULL, $1); }
-         | LIT_TRUE { $$ = createNode(NODE_EXPRESSION, NULL, $1); }
+         | LIT_INT { $$ = createNode(NODE_LITERAL_INT, NULL, $1); }
+         | LIT_CHAR { $$ = createNode(NODE_LITERAL_CHAR, NULL, $1); }
+         | LIT_REAL { $$ = createNode(NODE_LITERAL_REAL, NULL, $1); }
+         | LIT_FALSE { $$ = createNode(NODE_LITERAL_FALSE, NULL, $1); }
+         | LIT_TRUE { $$ = createNode(NODE_LITERAL_TRUE, NULL, $1); }
          | chamada_funcao { $$ = $1; }
          ;
 
@@ -181,6 +182,7 @@ chamada_funcao: TK_IDENTIFIER '(' lista_chamada ')' { $$ = createNode(NODE_FUNC_
 
 lista_chamada: /* empty */ { $$ = NULL; }
              | expressao ',' lista_chamada { $$ = createNode(NODE_ARGS_LIST, (ASTNode*[]){$1, $3, NULL}, NULL); }
+             | expressao { $$ = createNode(NODE_ARGS_LIST, (ASTNode*[]){$1, NULL}, NULL); }
              ;
 %% 
 int yyerror() {

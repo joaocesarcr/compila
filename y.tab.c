@@ -396,7 +396,7 @@ union yyalloc
 /* YYNNTS -- Number of nonterminals.  */
 #define YYNNTS  21
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  69
+#define YYNRULES  70
 /* YYNRULES -- Number of states.  */
 #define YYNSTATES  128
 
@@ -452,7 +452,8 @@ static const yytype_uint8 yyprhs[] =
       84,    87,    89,    91,    96,   101,   105,   109,   111,   113,
      118,   123,   128,   133,   139,   147,   153,   157,   161,   165,
      169,   173,   177,   181,   185,   189,   193,   197,   201,   205,
-     207,   209,   211,   213,   215,   217,   219,   221,   226,   227
+     207,   209,   211,   213,   215,   217,   219,   221,   226,   227,
+     231
 };
 
 /* YYRHS -- A `-1'-separated list of the rules' RHS.  */
@@ -481,7 +482,7 @@ static const yytype_int8 yyrhs[] =
       -1,    20,    66,    21,    -1,    38,    -1,    64,    -1,    39,
       -1,    40,    -1,    41,    -1,    42,    -1,    43,    -1,    67,
       -1,    38,    20,    68,    21,    -1,    -1,    66,    17,    68,
-      -1
+      -1,    66,    -1
 };
 
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
@@ -493,7 +494,8 @@ static const yytype_uint8 yyrline[] =
      130,   133,   134,   135,   136,   137,   138,   139,   140,   143,
      144,   147,   148,   151,   152,   153,   156,   157,   158,   159,
      160,   161,   162,   163,   164,   165,   166,   167,   168,   169,
-     170,   171,   172,   173,   174,   175,   176,   179,   182,   183
+     170,   171,   172,   173,   174,   175,   176,   179,   182,   183,
+     184
 };
 #endif
 
@@ -540,7 +542,8 @@ static const yytype_uint8 yyr1[] =
       61,    62,    62,    62,    62,    62,    62,    62,    62,    63,
       63,    64,    64,    65,    65,    65,    66,    66,    66,    66,
       66,    66,    66,    66,    66,    66,    66,    66,    66,    66,
-      66,    66,    66,    66,    66,    66,    66,    67,    68,    68
+      66,    66,    66,    66,    66,    66,    66,    67,    68,    68,
+      68
 };
 
 /* YYR2[YYN] -- Number of symbols composing right hand side of rule YYN.  */
@@ -552,7 +555,8 @@ static const yytype_uint8 yyr2[] =
        2,     1,     1,     4,     4,     3,     3,     1,     1,     4,
        4,     4,     4,     5,     7,     5,     3,     3,     3,     3,
        3,     3,     3,     3,     3,     3,     3,     3,     3,     1,
-       1,     1,     1,     1,     1,     1,     1,     4,     0,     3
+       1,     1,     1,     1,     1,     1,     1,     4,     0,     3,
+       1
 };
 
 /* YYDEFACT[STATE-NAME] -- Default rule to reduce with in state
@@ -570,7 +574,7 @@ static const yytype_uint8 yydefact[] =
       66,     0,     0,     0,     0,     0,     0,    35,     0,     0,
       68,     0,     0,     0,     0,    36,     0,     0,     0,     0,
        0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
-      33,    34,    58,     0,     0,    54,    55,    56,    57,    46,
+      33,    34,    58,    70,     0,    54,    55,    56,    57,    46,
       47,    48,    49,    50,    51,    53,    52,    42,    41,    39,
       40,    43,    45,    68,    67,     0,    69,    44
 };
@@ -1540,7 +1544,7 @@ yyreduce:
 
   case 8:
 #line 90 "parser.y"
-    { (yyval.astnode) = createNode(NODE_VAR_DECLARATION, (ASTNode*[]){(yyvsp[(1) - (4)].astnode), (yyvsp[(3) - (4)].astnode), NULL}, (yyvsp[(2) - (4)].symbol)); }
+    { (yyval.astnode) = createNode(NODE_VAR_DECLARATION, (ASTNode*[]){(yyvsp[(1) - (4)].astnode), createNode(NODE_TOKEN_IDENTIFIER,NULL,(yyvsp[(2) - (4)].symbol)),(yyvsp[(3) - (4)].astnode)}, NULL); }
     break;
 
   case 9:
@@ -1805,27 +1809,27 @@ yyreduce:
 
   case 61:
 #line 171 "parser.y"
-    { (yyval.astnode) = createNode(NODE_EXPRESSION, NULL, (yyvsp[(1) - (1)].symbol)); }
+    { (yyval.astnode) = createNode(NODE_LITERAL_INT, NULL, (yyvsp[(1) - (1)].symbol)); }
     break;
 
   case 62:
 #line 172 "parser.y"
-    { (yyval.astnode) = createNode(NODE_EXPRESSION, NULL, (yyvsp[(1) - (1)].symbol)); }
+    { (yyval.astnode) = createNode(NODE_LITERAL_CHAR, NULL, (yyvsp[(1) - (1)].symbol)); }
     break;
 
   case 63:
 #line 173 "parser.y"
-    { (yyval.astnode) = createNode(NODE_EXPRESSION, NULL, (yyvsp[(1) - (1)].symbol)); }
+    { (yyval.astnode) = createNode(NODE_LITERAL_REAL, NULL, (yyvsp[(1) - (1)].symbol)); }
     break;
 
   case 64:
 #line 174 "parser.y"
-    { (yyval.astnode) = createNode(NODE_EXPRESSION, NULL, (yyvsp[(1) - (1)].symbol)); }
+    { (yyval.astnode) = createNode(NODE_LITERAL_FALSE, NULL, (yyvsp[(1) - (1)].symbol)); }
     break;
 
   case 65:
 #line 175 "parser.y"
-    { (yyval.astnode) = createNode(NODE_EXPRESSION, NULL, (yyvsp[(1) - (1)].symbol)); }
+    { (yyval.astnode) = createNode(NODE_LITERAL_TRUE, NULL, (yyvsp[(1) - (1)].symbol)); }
     break;
 
   case 66:
@@ -1848,9 +1852,14 @@ yyreduce:
     { (yyval.astnode) = createNode(NODE_ARGS_LIST, (ASTNode*[]){(yyvsp[(1) - (3)].astnode), (yyvsp[(3) - (3)].astnode), NULL}, NULL); }
     break;
 
+  case 70:
+#line 184 "parser.y"
+    { (yyval.astnode) = createNode(NODE_ARGS_LIST, (ASTNode*[]){(yyvsp[(1) - (1)].astnode), NULL}, NULL); }
+    break;
+
 
 /* Line 1267 of yacc.c.  */
-#line 1854 "y.tab.c"
+#line 1863 "y.tab.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -2064,7 +2073,7 @@ yyreturn:
 }
 
 
-#line 185 "parser.y"
+#line 186 "parser.y"
  
 int yyerror() {
   fprintf(stderr,"Syntax error in line %d\n", getLineNumber());

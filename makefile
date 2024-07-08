@@ -9,7 +9,7 @@
 
 etapa2: lex.yy.c
 	yacc -v -d parser.y 
-	gcc -o etapa2 lex.yy.c -v
+	gcc -o etapa2 lex.yy.c -v -g
 
 lex.yy.c: scanner.l
 	lex scanner.l 

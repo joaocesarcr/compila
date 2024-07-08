@@ -102,6 +102,7 @@ Grammar
 
    67 lista_chamada: /* empty */
    68              | expressao ',' lista_chamada
+   69              | expressao
 
 
 Terminals, with rules where they appear
@@ -196,11 +197,11 @@ controle_fluxo (65)
 expressao (66)
     on left: 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62
     63 64 65, on right: 33 35 38 39 42 43 44 45 46 47 48 49 50 51 52
-    53 54 55 56 57 68
+    53 54 55 56 57 68 69
 chamada_funcao (67)
     on left: 66, on right: 65
 lista_chamada (68)
-    on left: 67 68, on right: 66 68
+    on left: 67 68 69, on right: 66 68
 
 
 state 0
@@ -1464,6 +1465,7 @@ state 103
    55          | expressao . OPERATOR_EQ expressao
    56          | expressao . OPERATOR_DIF expressao
    68 lista_chamada: expressao . ',' lista_chamada
+   69              | expressao .
 
     OPERATOR_LE   shift, and go to state 81
     OPERATOR_GE   shift, and go to state 82
@@ -1478,6 +1480,8 @@ state 103
     '>'           shift, and go to state 91
     '&'           shift, and go to state 92
     '|'           shift, and go to state 93
+
+    $default  reduce using rule 69 (lista_chamada)
 
 
 state 104
