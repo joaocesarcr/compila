@@ -38,9 +38,9 @@ Grammar
    14 parametro: tipo TK_IDENTIFIER
 
    15 tipo: KW_CHAR
-   16     | KW_INT
-   17     | KW_FLOAT
-   18     | KW_BOOL
+   16     | KW_FLOAT
+   17     | KW_BOOL
+   18     | KW_INT
 
    19 valor_inicial: LIT_INT
    20              | LIT_CHAR
@@ -131,9 +131,9 @@ $end (0) 0
 '~' (126)
 error (256)
 KW_CHAR (258) 15
-KW_INT (259) 16
-KW_FLOAT (260) 17
-KW_BOOL (261) 18
+KW_INT (259) 18
+KW_FLOAT (260) 16
+KW_BOOL (261) 17
 KW_IF (262) 42 43
 KW_ELSE (263) 43
 KW_WHILE (264) 44
@@ -231,23 +231,23 @@ state 1
 
 state 2
 
-   16 tipo: KW_INT .
+   18 tipo: KW_INT .
 
-    $default  reduce using rule 16 (tipo)
+    $default  reduce using rule 18 (tipo)
 
 
 state 3
 
-   17 tipo: KW_FLOAT .
+   16 tipo: KW_FLOAT .
 
-    $default  reduce using rule 17 (tipo)
+    $default  reduce using rule 16 (tipo)
 
 
 state 4
 
-   18 tipo: KW_BOOL .
+   17 tipo: KW_BOOL .
 
-    $default  reduce using rule 18 (tipo)
+    $default  reduce using rule 17 (tipo)
 
 
 state 5

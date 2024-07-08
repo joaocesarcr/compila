@@ -31,25 +31,8 @@ ASTNode* createNode(NodeType type, ASTNode* children[MAX_CHILDREN], HASH_NODE* v
 
 void printNode(ASTNode* node) {
     if (!node) return;
-
-    switch (node->type) {
-        case NODE_LITERAL_INT:
-            printf("LITERAL_INT: %s\n", node->value ? node->value->text : "NULL");
-            break;
-        case NODE_LITERAL_CHAR:
-            printf("LITERAL_CHAR: %s\n", node->value ? node->value->text : "NULL");
-            break;
-        case NODE_LITERAL_REAL:
-            printf("LITERAL_REAL: %s\n", node->value ? node->value->text : "NULL");
-            break;
-        case NODE_LITERAL_STRING:
-            printf("LITERAL_STRING: %s\n", node->value ? node->value->text : "NULL");
-            break;
-        // Add cases for other node types if necessary
-        default:
-            printf("NodeType: %s\n", NodeTypeNames[node->type]);
-            break;
-    }
+    if (!node->type) return;
+    printf("%s\n", NodeTypeNames[node->type]);
 }
 
 void printAST(ASTNode* root) {
@@ -67,7 +50,7 @@ void printTree(ASTNode* root, int level) {
     for (int i = 0; i < MAX_CHILDREN; i++) {
         if (root->children[i]) {
             printTree(root->children[i], level + 1);
-        }
+        } else break;
     }
 }
 
@@ -78,3 +61,7 @@ void printIndentation(int level) {
 }
 
 
+ASTNode** astNullChild() {
+    static ASTNode* nullArray[5] = {NULL, NULL, NULL, NULL, NULL};
+    return nullArray;
+}

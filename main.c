@@ -16,13 +16,14 @@ int isRunning(void);
 void initMe(void);
 
 int main(int argc, char** argv) {
-  printf("begin\n");
   hashInit();
-  printf("hash OK\n");
   if (argc) 
       yyin = fopen(argv[1], "r");
-  printf("Open OK\n");
+  printf("mds");
   yyparse();
+  hashPrint();
+  printf("Printa\n");
+  printf("Printa ok \n");
   printf("Parse OK\n");
   printAST(root);
   printf("Compilação OK\n");

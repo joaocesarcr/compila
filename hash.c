@@ -22,8 +22,9 @@ HASH_NODE *hashFind(char *text) {
   HASH_NODE *node;
   int address = hashAddress(text);
   for (node=Table[address]; node; node = node->next) {
-    if (strcmp(node->text,text)==0)
+    if (strcmp(node->text,text)==0) { 
       return node;
+    }
   }
   return 0;
 }

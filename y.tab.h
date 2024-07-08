@@ -100,10 +100,11 @@ typedef union YYSTYPE
 {
     ASTNode* astnode;
     HASH_NODE* symbol;
+    char* data;
     int token;
 }
 /* Line 1529 of yacc.c.  */
-#line 107 "y.tab.h"
+#line 108 "y.tab.h"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1

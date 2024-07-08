@@ -68,11 +68,12 @@ ASTNode* createNode(NodeType type, ASTNode* children[MAX_CHILDREN], HASH_NODE* v
 void printNode();
 void printTree();
 
+ASTNode** astNullChild();
+
 void printNode(ASTNode* node);
 void printTree(ASTNode* root, int level);
 void printAST(ASTNode* root);
 void printIndentation(int level);
-
 
 
 const char* NodeTypeNames[] = {
