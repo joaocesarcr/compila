@@ -7,11 +7,12 @@
 #include <string.h>
 
 ASTNode* root;
+extern HASH_NODE* hashFind(char* text);
 %}
 
 %union {
     ASTNode* astnode;
-    HASH_NODE* symbol;
+    HASH_NODE* hash_node;
     char* data;
     int token;
 }
@@ -56,14 +57,14 @@ ASTNode* root;
 %token <astnode> '~'
 %token <astnode> '.'
 
-%token <astnode> TK_IDENTIFIER     
-%token <astnode> LIT_INT           
-%token <astnode> LIT_CHAR          
-%token <astnode> LIT_REAL          
-%token <astnode> LIT_FALSE         
-%token <astnode> LIT_TRUE          
-%token <astnode> LIT_STRING        
-%token <astnode> TOKEN_ERROR       
+%token <hash_node> TK_IDENTIFIER     
+%token <hash_node> LIT_INT           
+%token <hash_node> LIT_CHAR          
+%token <hash_node> LIT_REAL          
+%token <hash_node> LIT_FALSE         
+%token <hash_node> LIT_TRUE          
+%token <hash_node> LIT_STRING        
+%token <hash_node> TOKEN_ERROR       
 
 %left '+' '-'
 %left '*' '/'
@@ -92,19 +93,38 @@ declaracao_variavel: tipo TK_IDENTIFIER ':' valor_inicial { $$ = createNode(NODE
                    ;
 
 
-declaracao_vetor: tipo TK_IDENTIFIER '[' LIT_INT ']' ':' valores_iniciais { $$ = createNode(NODE_VECTOR_DECLARATION, (ASTNode*[]){$1, createNode(NODE_LITERAL_INT,NULL,NULL),createNode(NODE_LITERAL_INT,NULL,NULL), $6}, NULL); }
+declaracao_vetor: tipo TK_IDENTIFIER '[' LIT_INT ']' ':' valores_iniciais {
+                $$ = createNode(NODE_VECTOR_DECLARATION,
+                                (ASTNode*[]){ 
+                                    $1,
+                                    createNode(NODE_TOKEN_IDENTIFIER,astNullChild(),$2),
+                                    createNode(NODE_LITERAL_INT,astNullChild(),$4),
+                                    $7,
+                                },
+                                NULL);
+                              }
                 | tipo TK_IDENTIFIER '[' LIT_INT ']' { $$ = createNode(NODE_VECTOR_DECLARATION, (ASTNode*[]){$1,  createNode(NODE_TOKEN_IDENTIFIER,NULL,NULL),createNode(NODE_LITERAL_INT,NULL,NULL), NULL}, NULL); }
                 ;
 
-declaracao_funcao: tipo TK_IDENTIFIER '(' lista_parametros ')' bloco { $$ = createNode(NODE_FUNC_DECLARATION, (ASTNode*[]){$1, $3, $5, NULL}, NULL); }
+declaracao_funcao: tipo TK_IDENTIFIER '(' lista_parametros ')' bloco { $$ = createNode(
+                                                                                   NODE_FUNC_DECLARATION,
+                                                                                   (ASTNode*[]){
+                                                                                        $1,
+                                                                                        createNode(NODE_TOKEN_IDENTIFIER,astNullChild(),$2),
+                                                                                        $4,
+                                                                                        $6,
+                                                                                        NULL},
+                                                                                   NULL); }
                  ;
 
-lista_parametros: /* vazio */ { $$ = NULL; }
-                | parametro ',' lista_parametros { $$ = createNode(NODE_PARAM_LIST, (ASTNode*[]){$1, $3, NULL}, NULL); }
+lista_parametros: /* vazio */ { $$ = createNode(NODE_EMPTY,astNullChild(),NULL); }
                 | parametro { $$ = createNode(NODE_PARAM_LIST, (ASTNode*[]){$1, NULL}, NULL); }
+                | parametro ',' lista_parametros { $$ = createNode(NODE_PARAM_LIST, (ASTNode*[]){$1, $3, NULL,NULL,NULL}, NULL); }
                 ;
 
-parametro: tipo TK_IDENTIFIER { $$ = createNode(NODE_PARAM, (ASTNode*[]){$1, NULL},NULL); }
+parametro: tipo TK_IDENTIFIER { $$ = createNode(NODE_PARAM, (ASTNode*[]){
+         $1,
+         createNode(NODE_TOKEN_IDENTIFIER,astNullChild(),$2),NULL,NULL,NULL},NULL); }
          ;
 
 tipo: KW_CHAR { $$ = createNode(NODE_KW_CHAR, NULL, NULL); }
@@ -113,19 +133,19 @@ tipo: KW_CHAR { $$ = createNode(NODE_KW_CHAR, NULL, NULL); }
     | KW_INT { $$ = createNode(NODE_KW_INT,NULL, NULL); }
     ;
 
-valor_inicial: LIT_INT { $$ = createNode(NODE_LITERAL_INT, NULL,       NULL); }
-             | LIT_CHAR { $$ = createNode(NODE_LITERAL_CHAR, NULL,     NULL); }
-             | LIT_REAL { $$ = createNode(NODE_LITERAL_CHAR, NULL,     NULL); }
-             | LIT_FALSE { $$ = createNode(NODE_LITERAL_FALSE, NULL,   NULL); }
-             | LIT_TRUE { $$ = createNode(NODE_LITERAL_TRUE, NULL,     NULL); }
-             | LIT_STRING { $$ = createNode(NODE_LITERAL_STRING, NULL, NULL); }
+valor_inicial: LIT_INT { $$ = createNode(NODE_LITERAL_INT,       astNullChild(),$1); }
+             | LIT_CHAR { $$ = createNode(NODE_LITERAL_CHAR,     astNullChild(),$1); }
+             | LIT_REAL { $$ = createNode(NODE_LITERAL_CHAR,     astNullChild(),$1); }
+             | LIT_FALSE { $$ = createNode(NODE_LITERAL_FALSE,   astNullChild(),$1); }
+             | LIT_TRUE { $$ = createNode(NODE_LITERAL_TRUE,     astNullChild(),$1); }
+             | LIT_STRING { $$ = createNode(NODE_LITERAL_STRING, astNullChild(),$1); }
              ;
 
 valores_iniciais: valor_inicial { $$ = createNode(NODE_VALUES_LIST, (ASTNode*[]){$1, NULL}, NULL); }
                 | valores_iniciais valor_inicial { $$ = createNode(NODE_VALUES_LIST, (ASTNode*[]){$1, $2, NULL}, NULL); }
                 ;
 
-bloco: '{' lista_comandos '}' { $$ = createNode(NODE_BLOCK, (ASTNode*[]){$2, NULL}, NULL); }
+bloco: '{' lista_comandos '}' { $$ = createNode(NODE_BLOCK, (ASTNode*[]){$2, NULL,NULL,NULL,NULL}, NULL); }
      ;
 
 lista_comandos: /* vazio */ { $$ = NULL; }
@@ -168,7 +188,10 @@ expressao: expressao '+' expressao { $$ = createNode(NODE_ADDITION, (ASTNode*[])
          | expressao OPERATOR_EQ expressao { $$ = createNode(NODE_EQUAL, (ASTNode*[]){$1, $3, NULL}, NULL); }
          | expressao OPERATOR_DIF expressao { $$ = createNode(NODE_NOT_EQUAL, (ASTNode*[]){$1, $3, NULL}, NULL); }
          | '(' expressao ')' { $$ = $2;  }
-         | TK_IDENTIFIER { $$ = createNode(NODE_TOKEN_IDENTIFIER, NULL, NULL); }
+         | TK_IDENTIFIER {
+               //printf("\nValue of $1: %s\n", $1->text);
+               $$ = createNode(NODE_TOKEN_IDENTIFIER, astNullChild(), $1); 
+           }
          | vetor { $$ = $1; }
          | LIT_INT { $$ = createNode(NODE_LITERAL_INT, NULL,    NULL); }
          | LIT_CHAR { $$ = createNode(NODE_LITERAL_CHAR, NULL,  NULL); }

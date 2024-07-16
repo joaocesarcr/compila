@@ -13,7 +13,6 @@ int running = 1;
 int lineNumber = 1;
 %}
 
-
 %%
 
 "/*"                        {BEGIN(multiLineComment);}
@@ -64,7 +63,11 @@ int lineNumber = 1;
 "true"                      { return LIT_TRUE; }
 "false"                     { return LIT_FALSE; }
 
-[a-zA-Z_][a-zA-Z0-9_]*      { return TK_IDENTIFIER; }
+[a-zA-Z_][a-zA-Z0-9_]*      { 
+                               HASH_NODE* entry = hashInsert(TK_IDENTIFIER, yytext);
+                               yylval.hash_node = entry;
+                               return TK_IDENTIFIER;
+                            }
 
 [0-9]+                      { hashInsert(LIT_INT,yytext); return LIT_INT; }
 '[^'\n]'                    { hashInsert(LIT_CHAR,yytext); return LIT_CHAR; }

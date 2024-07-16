@@ -19,7 +19,6 @@ int main(int argc, char** argv) {
   hashInit();
   if (argc) 
       yyin = fopen(argv[1], "r");
-  printf("mds");
   yyparse();
   hashPrint();
   printf("Printa\n");

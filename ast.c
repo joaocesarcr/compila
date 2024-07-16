@@ -33,6 +33,7 @@ void printNode(ASTNode* node) {
     if (!node) return;
     if (!node->type) return;
     printf("%s\n", NodeTypeNames[node->type]);
+    //if (node->type == NODE_TOKEN_IDENTIFIER) printf("%d",node->value->type);
 }
 
 void printAST(ASTNode* root) {

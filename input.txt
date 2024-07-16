@@ -19,6 +19,7 @@ linhas
 int main ()
   {
   number = 0;
+  d = 5;
   d = d - i;
   d = 5;
   v[d] = 55;

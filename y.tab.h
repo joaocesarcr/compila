@@ -96,10 +96,10 @@
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef union YYSTYPE
-#line 12 "parser.y"
+#line 13 "parser.y"
 {
     ASTNode* astnode;
-    HASH_NODE* symbol;
+    HASH_NODE* hash_node;
     char* data;
     int token;
 }

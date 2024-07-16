@@ -55,6 +55,7 @@ typedef enum {
     NODE_KW_IF,
     NODE_KW_IF_ELSE,
     NODE_KW_WHILE,
+    NODE_EMPTY,
 } NodeType;
 
 typedef struct ASTNode_s {
@@ -127,5 +128,6 @@ const char* NodeTypeNames[] = {
     "NODE_KW_IF",
     "NODE_KW_IF_ELSE",
     "NODE_KW_WHILE",
+    "NODE_EMPTY",
 };
 #endif

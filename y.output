@@ -32,8 +32,8 @@ Grammar
    10 declaracao_funcao: tipo TK_IDENTIFIER '(' lista_parametros ')' bloco
 
    11 lista_parametros: /* empty */
-   12                 | parametro ',' lista_parametros
-   13                 | parametro
+   12                 | parametro
+   13                 | parametro ',' lista_parametros
 
    14 parametro: tipo TK_IDENTIFIER
 
@@ -114,7 +114,7 @@ $end (0) 0
 ')' (41) 10 42 43 44 57 66
 '*' (42) 47
 '+' (43) 45
-',' (44) 12 68
+',' (44) 13 68
 '-' (45) 46
 '.' (46)
 '/' (47) 48
@@ -173,7 +173,7 @@ declaracao_vetor (53)
 declaracao_funcao (54)
     on left: 10, on right: 6
 lista_parametros (55)
-    on left: 11 12 13, on right: 10 12
+    on left: 11 12 13, on right: 10 13
 parametro (56)
     on left: 14, on right: 12 13
 tipo (57)
@@ -450,12 +450,12 @@ state 27
 
 state 28
 
-   12 lista_parametros: parametro . ',' lista_parametros
-   13                 | parametro .
+   12 lista_parametros: parametro .
+   13                 | parametro . ',' lista_parametros
 
     ','  shift, and go to state 32
 
-    $default  reduce using rule 13 (lista_parametros)
+    $default  reduce using rule 12 (lista_parametros)
 
 
 state 29
@@ -484,7 +484,7 @@ state 31
 
 state 32
 
-   12 lista_parametros: parametro ',' . lista_parametros
+   13 lista_parametros: parametro ',' . lista_parametros
 
     KW_CHAR   shift, and go to state 1
     KW_INT    shift, and go to state 2
@@ -533,9 +533,9 @@ state 36
 
 state 37
 
-   12 lista_parametros: parametro ',' lista_parametros .
+   13 lista_parametros: parametro ',' lista_parametros .
 
-    $default  reduce using rule 12 (lista_parametros)
+    $default  reduce using rule 13 (lista_parametros)
 
 
 state 38
