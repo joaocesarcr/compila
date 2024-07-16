@@ -32,8 +32,12 @@ ASTNode* createNode(NodeType type, ASTNode* children[MAX_CHILDREN], HASH_NODE* v
 void printNode(ASTNode* node) {
     if (!node) return;
     if (!node->type) return;
-    printf("%s\n", NodeTypeNames[node->type]);
-    //if (node->type == NODE_TOKEN_IDENTIFIER) printf("%d",node->value->type);
+
+    if (node->type == NODE_TOKEN_IDENTIFIER) { 
+      printf("%s", NodeTypeNames[node->type]);
+      printf(": %s\n",(node->value)->text);
+    }
+    else printf("%s\n", NodeTypeNames[node->type]);
 }
 
 void printAST(ASTNode* root) {

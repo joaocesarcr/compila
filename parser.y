@@ -89,7 +89,16 @@ declaracao: declaracao_variavel ';' { $$ = $1; }
           | declaracao_funcao { $$ = $1; }
           ;
 
-declaracao_variavel: tipo TK_IDENTIFIER ':' valor_inicial { $$ = createNode(NODE_VAR_DECLARATION, (ASTNode*[]){$1, createNode(NODE_TOKEN_IDENTIFIER,astNullChild(),NULL),$4,NULL,NULL}, NULL); }
+declaracao_variavel: tipo TK_IDENTIFIER ':' valor_inicial { $$ = createNode(
+                                                                     NODE_VAR_DECLARATION,
+                                                                     (ASTNode*[]) {
+                                                                         $1,
+                                                                         createNode(NODE_TOKEN_IDENTIFIER,astNullChild(),$2),
+                                                                         $4,
+                                                                         NULL,
+                                                                         NULL
+                                                                      },
+                                                                      NULL); }
                    ;
 
 
@@ -103,7 +112,7 @@ declaracao_vetor: tipo TK_IDENTIFIER '[' LIT_INT ']' ':' valores_iniciais {
                                 },
                                 NULL);
                               }
-                | tipo TK_IDENTIFIER '[' LIT_INT ']' { $$ = createNode(NODE_VECTOR_DECLARATION, (ASTNode*[]){$1,  createNode(NODE_TOKEN_IDENTIFIER,NULL,NULL),createNode(NODE_LITERAL_INT,NULL,NULL), NULL}, NULL); }
+                | tipo TK_IDENTIFIER '[' LIT_INT ']' { $$ = createNode(NODE_VECTOR_DECLARATION, (ASTNode*[]){$1,  createNode(NODE_TOKEN_IDENTIFIER,astNullChild(),$2),createNode(NODE_LITERAL_INT,astNullChild(),$4), NULL}, NULL); }
                 ;
 
 declaracao_funcao: tipo TK_IDENTIFIER '(' lista_parametros ')' bloco { $$ = createNode(
@@ -149,12 +158,13 @@ bloco: '{' lista_comandos '}' { $$ = createNode(NODE_BLOCK, (ASTNode*[]){$2, NUL
      ;
 
 lista_comandos: /* vazio */ { $$ = NULL; }
-              | lista_comandos comando { $$ = createNode(NODE_COMMANDS_LIST, (ASTNode*[]){$1, $2, NULL}, NULL); }
+              | lista_comandos comando{ $$ = createNode(NODE_COMMANDS_LIST, (ASTNode*[]){$1, $2, NULL}, NULL); }
+              | comando { $$ = $1;}
               ;
 
 comando: atribuicao { $$ = $1; }
        | controle_fluxo { $$ = $1; }
-       | KW_READ tipo TK_IDENTIFIER ';' { $$ = createNode(NODE_KW_READ, (ASTNode*[]){$2, createNode(NODE_TOKEN_IDENTIFIER, NULL,NULL), NULL}, NULL); }
+       | KW_READ tipo TK_IDENTIFIER ';' { $$ = createNode(NODE_KW_READ, (ASTNode*[]){$2, createNode(NODE_TOKEN_IDENTIFIER, astNullChild(),$3), NULL}, NULL); }
        | KW_PRINT tipo expressao ';' { $$ = createNode(NODE_KW_PRINT, (ASTNode*[]){$2, $3, NULL}, NULL); }
        | KW_PRINT LIT_STRING ';' { $$ = createNode(NODE_KW_PRINT, NULL, NULL); }
        | KW_RETURN expressao ';' { $$ = createNode(NODE_KW_RETURN, (ASTNode*[]){$2, NULL}, NULL); }
@@ -162,7 +172,17 @@ comando: atribuicao { $$ = $1; }
        | ';' { $$ = NULL; }
        ;
 
-atribuicao: TK_IDENTIFIER '=' expressao ';' { $$ = createNode(NODE_ASSIGNMENT, (ASTNode*[]){createNode(NODE_TOKEN_IDENTIFIER, NULL, NULL), $3, NULL}, NULL); }
+atribuicao: TK_IDENTIFIER '=' expressao ';' { $$ = createNode(
+                                                      NODE_ASSIGNMENT,
+                                                      (ASTNode*[]){
+                                                          createNode(NODE_TOKEN_IDENTIFIER, NULL, $1),
+                                                          $3,
+                                                          NULL,
+                                                          NULL,
+                                                          NULL
+                                                      },
+                                                      NULL);
+                                            }
           | vetor '=' expressao ';' { $$ = createNode(NODE_ASSIGNMENT, (ASTNode*[]){$1, $3, NULL},NULL); }
           ;
 
