@@ -15,6 +15,6 @@ lex.yy.c: scanner.l
 	lex scanner.l 
 
 clean:
-	rm lex.yy.c etapa3 y.tab.h y.tab.c 
+	rm -rf lex.yy.c etapa3 y.tab.h y.tab.c ast.o y.output etapa3.dSYM/
 
 remake: clean etapa3

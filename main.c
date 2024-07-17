@@ -1,7 +1,7 @@
-/* Compiladores 2024/01 - Etapa 2
+/* Compiladores 2024/01 - Etapa 3
  * João César de Paula Criscolo  - 00304342
  * Prof. Marcelo Johann
- */
+*/
 
 #include <stdio.h>
 #include <stdlib.h>

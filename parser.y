@@ -1,4 +1,9 @@
 %{
+/* Compiladores 2024/01 - Etapa 3
+ * João César de Paula Criscolo  - 00304342
+ * Prof. Marcelo Johann
+*/
+
 #include "ast.h"
 #include "hash.h"
 
