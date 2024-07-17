@@ -10,6 +10,7 @@ typedef enum {
     NODE_DECLARATION,
     NODE_VAR_DECLARATION,
     NODE_VECTOR_DECLARATION,
+    NODE_VECTOR_DECLARATION_AND_ASIGN,
     NODE_FUNC_DECLARATION,
     NODE_PARAM_LIST,
     NODE_PARAM,
@@ -68,11 +69,13 @@ typedef struct ASTNode_s {
 ASTNode* createNode(NodeType type, ASTNode* children[MAX_CHILDREN], HASH_NODE* value);
 void printNode();
 void printTree();
-
+int isListType(NodeType type);
 ASTNode** astNullChild();
 
 void printNode(ASTNode* node);
 void printTree(ASTNode* root, int level);
+
+void printProgram(ASTNode* node);
 void printAST(ASTNode* root);
 void printIndentation(int level);
 
@@ -83,6 +86,7 @@ const char* NodeTypeNames[] = {
     "NODE_DECLARATION",
     "NODE_VAR_DECLARATION",
     "NODE_VECTOR_DECLARATION",
+    "NODE_VECTOR_DECLARATION_AND_ASIGN",
     "NODE_FUNC_DECLARATION",
     "NODE_PARAM_LIST",
     "NODE_PARAM",

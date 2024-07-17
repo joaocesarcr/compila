@@ -1022,57 +1022,81 @@ case 44:
 YY_RULE_SETUP
 #line 66 "scanner.l"
 { 
-                               HASH_NODE* entry = hashInsert(TK_IDENTIFIER, yytext);
-                               yylval.hash_node = entry;
-                               return TK_IDENTIFIER;
+                              HASH_NODE* entry = hashInsert(TK_IDENTIFIER, yytext);
+                              yylval.hash_node = entry;
+                              return TK_IDENTIFIER;
                             }
 	YY_BREAK
 case 45:
 YY_RULE_SETUP
 #line 72 "scanner.l"
-{ hashInsert(LIT_INT,yytext); return LIT_INT; }
+{ 
+                              HASH_NODE* entry = hashInsert(LIT_INT, yytext);
+                              yylval.hash_node = entry;
+                              return LIT_INT; 
+                            }
 	YY_BREAK
 case 46:
 YY_RULE_SETUP
-#line 73 "scanner.l"
-{ hashInsert(LIT_CHAR,yytext); return LIT_CHAR; }
+#line 77 "scanner.l"
+{ 
+                              HASH_NODE* entry = hashInsert(LIT_CHAR, yytext);
+                              yylval.hash_node = entry;
+                              return LIT_CHAR; 
+                            }
 	YY_BREAK
 case 47:
 YY_RULE_SETUP
-#line 74 "scanner.l"
-{ hashInsert(LIT_REAL,yytext); return LIT_REAL; }
+#line 83 "scanner.l"
+{ 
+                              HASH_NODE* entry = hashInsert(LIT_REAL, yytext);
+                              yylval.hash_node = entry; 
+                              return LIT_REAL; 
+                            }
 	YY_BREAK
 case 48:
 YY_RULE_SETUP
-#line 75 "scanner.l"
-{ hashInsert(LIT_REAL,yytext); return LIT_REAL; }
+#line 88 "scanner.l"
+{
+                              HASH_NODE* entry = hashInsert(LIT_REAL, yytext);
+                              yylval.hash_node = entry;
+                              return LIT_REAL; 
+                            }
 	YY_BREAK
 case 49:
 YY_RULE_SETUP
-#line 76 "scanner.l"
-{ hashInsert(LIT_REAL,yytext); return LIT_REAL; }
+#line 93 "scanner.l"
+{
+                              HASH_NODE* entry = hashInsert(LIT_REAL, yytext);
+                              yylval.hash_node = entry;  
+                              return LIT_REAL; 
+                            }
 	YY_BREAK
 case 50:
 YY_RULE_SETUP
-#line 77 "scanner.l"
-{ hashInsert(LIT_STRING,yytext); return LIT_STRING; }
+#line 98 "scanner.l"
+{ 
+                              HASH_NODE* entry = hashInsert(LIT_STRING, yytext);
+                              yylval.hash_node = entry;
+                              return LIT_STRING; 
+                            }
 	YY_BREAK
 case 51:
 YY_RULE_SETUP
-#line 79 "scanner.l"
+#line 104 "scanner.l"
 {}
 	YY_BREAK
 case 52:
 YY_RULE_SETUP
-#line 81 "scanner.l"
+#line 106 "scanner.l"
 { return TOKEN_ERROR; }
 	YY_BREAK
 case 53:
 YY_RULE_SETUP
-#line 83 "scanner.l"
+#line 108 "scanner.l"
 ECHO;
 	YY_BREAK
-#line 1075 "lex.yy.c"
+#line 1099 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 case YY_STATE_EOF(multiLineComment):
 	yyterminate();
@@ -2078,7 +2102,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 83 "scanner.l"
+#line 108 "scanner.l"
 
 void initMe(void) {
     hashInit();

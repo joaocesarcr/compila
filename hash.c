@@ -14,7 +14,7 @@ int hashAddress(char *text) {
   int address = 1;
   int i;
   for(i=0;i<strlen(text); i++)
-    address = (address *text[i]) % HASH_SIZE + 1;
+    address = (address * text[i]) % HASH_SIZE + 1;
     return address-1;
 }
 

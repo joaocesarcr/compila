@@ -491,13 +491,13 @@ static const yytype_int8 yyrhs[] =
 static const yytype_uint8 yyrline[] =
 {
        0,    80,    80,    83,    84,    87,    88,    89,    92,   105,
-     115,   118,   129,   130,   131,   134,   139,   140,   141,   142,
-     145,   146,   147,   148,   149,   150,   153,   154,   157,   160,
-     161,   162,   165,   166,   167,   168,   169,   170,   171,   172,
-     175,   186,   189,   190,   193,   194,   195,   198,   199,   200,
-     201,   202,   203,   204,   205,   206,   207,   208,   209,   210,
-     211,   215,   216,   217,   218,   219,   220,   221,   224,   227,
-     228,   229
+     116,   129,   140,   141,   142,   145,   150,   151,   152,   153,
+     156,   157,   158,   159,   160,   161,   164,   165,   175,   178,
+     179,   180,   183,   184,   185,   186,   187,   188,   189,   190,
+     193,   204,   207,   208,   211,   212,   213,   216,   217,   218,
+     219,   220,   221,   222,   223,   224,   225,   226,   227,   228,
+     229,   233,   234,   235,   236,   237,   238,   239,   242,   245,
+     246,   247
 };
 #endif
 
@@ -1561,24 +1561,35 @@ yyreduce:
   case 9:
 #line 105 "parser.y"
     {
-                (yyval.astnode) = createNode(NODE_VECTOR_DECLARATION,
+                (yyval.astnode) = createNode(NODE_VECTOR_DECLARATION_AND_ASIGN,
                                 (ASTNode*[]){ 
                                     (yyvsp[(1) - (7)].astnode),
                                     createNode(NODE_TOKEN_IDENTIFIER,astNullChild(),(yyvsp[(2) - (7)].hash_node)),
                                     createNode(NODE_LITERAL_INT,astNullChild(),(yyvsp[(4) - (7)].hash_node)),
                                     (yyvsp[(7) - (7)].astnode),
+                                    NULL,
                                 },
                                 NULL);
                               }
     break;
 
   case 10:
-#line 115 "parser.y"
-    { (yyval.astnode) = createNode(NODE_VECTOR_DECLARATION, (ASTNode*[]){(yyvsp[(1) - (5)].astnode),  createNode(NODE_TOKEN_IDENTIFIER,astNullChild(),(yyvsp[(2) - (5)].hash_node)),createNode(NODE_LITERAL_INT,astNullChild(),(yyvsp[(4) - (5)].hash_node)), NULL}, NULL); }
+#line 116 "parser.y"
+    {
+                (yyval.astnode) = createNode(NODE_VECTOR_DECLARATION,
+                                   (ASTNode*[]){ 
+                                         (yyvsp[(1) - (5)].astnode),
+                                         createNode(NODE_TOKEN_IDENTIFIER,astNullChild(),(yyvsp[(2) - (5)].hash_node)),
+                                         createNode(NODE_LITERAL_INT,astNullChild(),(yyvsp[(4) - (5)].hash_node)),
+                                         NULL,
+                                         NULL,
+                                    },
+                                    NULL);
+                }
     break;
 
   case 11:
-#line 118 "parser.y"
+#line 129 "parser.y"
     { (yyval.astnode) = createNode(
                                                                                    NODE_FUNC_DECLARATION,
                                                                                    (ASTNode*[]){
@@ -1591,149 +1602,156 @@ yyreduce:
     break;
 
   case 12:
-#line 129 "parser.y"
+#line 140 "parser.y"
     { (yyval.astnode) = createNode(NODE_EMPTY,astNullChild(),NULL); }
     break;
 
   case 13:
-#line 130 "parser.y"
+#line 141 "parser.y"
     { (yyval.astnode) = createNode(NODE_PARAM_LIST, (ASTNode*[]){(yyvsp[(1) - (1)].astnode), NULL}, NULL); }
     break;
 
   case 14:
-#line 131 "parser.y"
+#line 142 "parser.y"
     { (yyval.astnode) = createNode(NODE_PARAM_LIST, (ASTNode*[]){(yyvsp[(1) - (3)].astnode), (yyvsp[(3) - (3)].astnode), NULL,NULL,NULL}, NULL); }
     break;
 
   case 15:
-#line 134 "parser.y"
+#line 145 "parser.y"
     { (yyval.astnode) = createNode(NODE_PARAM, (ASTNode*[]){
          (yyvsp[(1) - (2)].astnode),
          createNode(NODE_TOKEN_IDENTIFIER,astNullChild(),(yyvsp[(2) - (2)].hash_node)),NULL,NULL,NULL},NULL); }
     break;
 
   case 16:
-#line 139 "parser.y"
+#line 150 "parser.y"
     { (yyval.astnode) = createNode(NODE_KW_CHAR, NULL, NULL); }
     break;
 
   case 17:
-#line 140 "parser.y"
+#line 151 "parser.y"
     { (yyval.astnode) = createNode(NODE_KW_FLOAT, NULL, NULL); }
     break;
 
   case 18:
-#line 141 "parser.y"
+#line 152 "parser.y"
     { (yyval.astnode) = createNode(NODE_KW_BOOL, NULL, NULL); }
     break;
 
   case 19:
-#line 142 "parser.y"
+#line 153 "parser.y"
     { (yyval.astnode) = createNode(NODE_KW_INT,NULL, NULL); }
     break;
 
   case 20:
-#line 145 "parser.y"
+#line 156 "parser.y"
     { (yyval.astnode) = createNode(NODE_LITERAL_INT,       astNullChild(),(yyvsp[(1) - (1)].hash_node)); }
     break;
 
   case 21:
-#line 146 "parser.y"
+#line 157 "parser.y"
     { (yyval.astnode) = createNode(NODE_LITERAL_CHAR,     astNullChild(),(yyvsp[(1) - (1)].hash_node)); }
     break;
 
   case 22:
-#line 147 "parser.y"
+#line 158 "parser.y"
     { (yyval.astnode) = createNode(NODE_LITERAL_CHAR,     astNullChild(),(yyvsp[(1) - (1)].hash_node)); }
     break;
 
   case 23:
-#line 148 "parser.y"
+#line 159 "parser.y"
     { (yyval.astnode) = createNode(NODE_LITERAL_FALSE,   astNullChild(),(yyvsp[(1) - (1)].hash_node)); }
     break;
 
   case 24:
-#line 149 "parser.y"
+#line 160 "parser.y"
     { (yyval.astnode) = createNode(NODE_LITERAL_TRUE,     astNullChild(),(yyvsp[(1) - (1)].hash_node)); }
     break;
 
   case 25:
-#line 150 "parser.y"
+#line 161 "parser.y"
     { (yyval.astnode) = createNode(NODE_LITERAL_STRING, astNullChild(),(yyvsp[(1) - (1)].hash_node)); }
     break;
 
   case 26:
-#line 153 "parser.y"
-    { (yyval.astnode) = createNode(NODE_VALUES_LIST, (ASTNode*[]){(yyvsp[(1) - (1)].astnode), NULL}, NULL); }
+#line 164 "parser.y"
+    { (yyval.astnode) = (yyvsp[(1) - (1)].astnode) ;}
     break;
 
   case 27:
-#line 154 "parser.y"
-    { (yyval.astnode) = createNode(NODE_VALUES_LIST, (ASTNode*[]){(yyvsp[(1) - (2)].astnode), (yyvsp[(2) - (2)].astnode), NULL}, NULL); }
+#line 165 "parser.y"
+    { (yyval.astnode) = createNode(NODE_VALUES_LIST, (ASTNode*[]){
+                                                                                          (yyvsp[(1) - (2)].astnode),
+                                                                                          (yyvsp[(2) - (2)].astnode),
+                                                                                          NULL,
+                                                                                          NULL,
+                                                                                          NULL
+                                                                                      },
+                                                                                          NULL); }
     break;
 
   case 28:
-#line 157 "parser.y"
+#line 175 "parser.y"
     { (yyval.astnode) = createNode(NODE_BLOCK, (ASTNode*[]){(yyvsp[(2) - (3)].astnode), NULL,NULL,NULL,NULL}, NULL); }
     break;
 
   case 29:
-#line 160 "parser.y"
+#line 178 "parser.y"
     { (yyval.astnode) = NULL; }
     break;
 
   case 30:
-#line 161 "parser.y"
+#line 179 "parser.y"
     { (yyval.astnode) = createNode(NODE_COMMANDS_LIST, (ASTNode*[]){(yyvsp[(1) - (2)].astnode), (yyvsp[(2) - (2)].astnode), NULL}, NULL); }
     break;
 
   case 31:
-#line 162 "parser.y"
+#line 180 "parser.y"
     { (yyval.astnode) = (yyvsp[(1) - (1)].astnode);}
     break;
 
   case 32:
-#line 165 "parser.y"
+#line 183 "parser.y"
     { (yyval.astnode) = (yyvsp[(1) - (1)].astnode); }
     break;
 
   case 33:
-#line 166 "parser.y"
+#line 184 "parser.y"
     { (yyval.astnode) = (yyvsp[(1) - (1)].astnode); }
     break;
 
   case 34:
-#line 167 "parser.y"
+#line 185 "parser.y"
     { (yyval.astnode) = createNode(NODE_KW_READ, (ASTNode*[]){(yyvsp[(2) - (4)].astnode), createNode(NODE_TOKEN_IDENTIFIER, astNullChild(),(yyvsp[(3) - (4)].hash_node)), NULL}, NULL); }
     break;
 
   case 35:
-#line 168 "parser.y"
+#line 186 "parser.y"
     { (yyval.astnode) = createNode(NODE_KW_PRINT, (ASTNode*[]){(yyvsp[(2) - (4)].astnode), (yyvsp[(3) - (4)].astnode), NULL}, NULL); }
     break;
 
   case 36:
-#line 169 "parser.y"
-    { (yyval.astnode) = createNode(NODE_KW_PRINT, NULL, NULL); }
+#line 187 "parser.y"
+    { (yyval.astnode) = createNode(NODE_KW_PRINT, (ASTNode*[]){createNode(NODE_LITERAL_STRING, astNullChild(), (yyvsp[(2) - (3)].hash_node))}, NULL); }
     break;
 
   case 37:
-#line 170 "parser.y"
+#line 188 "parser.y"
     { (yyval.astnode) = createNode(NODE_KW_RETURN, (ASTNode*[]){(yyvsp[(2) - (3)].astnode), NULL}, NULL); }
     break;
 
   case 38:
-#line 171 "parser.y"
+#line 189 "parser.y"
     { (yyval.astnode) = (yyvsp[(1) - (1)].astnode); }
     break;
 
   case 39:
-#line 172 "parser.y"
+#line 190 "parser.y"
     { (yyval.astnode) = NULL; }
     break;
 
   case 40:
-#line 175 "parser.y"
+#line 193 "parser.y"
     { (yyval.astnode) = createNode(
                                                       NODE_ASSIGNMENT,
                                                       (ASTNode*[]){
@@ -1748,102 +1766,102 @@ yyreduce:
     break;
 
   case 41:
-#line 186 "parser.y"
+#line 204 "parser.y"
     { (yyval.astnode) = createNode(NODE_ASSIGNMENT, (ASTNode*[]){(yyvsp[(1) - (4)].astnode), (yyvsp[(3) - (4)].astnode), NULL},NULL); }
     break;
 
   case 42:
-#line 189 "parser.y"
+#line 207 "parser.y"
     { (yyval.astnode) = createNode(NODE_VECTOR, (ASTNode*[]){createNode(NODE_TYPE, NULL,NULL), createNode(NODE_INITIAL_VALUE, NULL, NULL), NULL}, NULL); }
     break;
 
   case 43:
-#line 190 "parser.y"
+#line 208 "parser.y"
     { (yyval.astnode) = createNode(NODE_VECTOR, (ASTNode*[]){createNode(NODE_TYPE, NULL,NULL), createNode(NODE_TYPE, NULL, NULL), NULL}, NULL); }
     break;
 
   case 44:
-#line 193 "parser.y"
+#line 211 "parser.y"
     { (yyval.astnode) = createNode(NODE_KW_IF, (ASTNode*[]){(yyvsp[(3) - (5)].astnode), (yyvsp[(5) - (5)].astnode), NULL},NULL); }
     break;
 
   case 45:
-#line 194 "parser.y"
+#line 212 "parser.y"
     { (yyval.astnode) = createNode(NODE_KW_IF_ELSE, (ASTNode*[]){(yyvsp[(3) - (7)].astnode), (yyvsp[(5) - (7)].astnode), (yyvsp[(7) - (7)].astnode), NULL}, NULL); }
     break;
 
   case 46:
-#line 195 "parser.y"
+#line 213 "parser.y"
     { (yyval.astnode) = createNode(NODE_KW_WHILE, (ASTNode*[]){(yyvsp[(3) - (5)].astnode), (yyvsp[(5) - (5)].astnode), NULL}, NULL); }
     break;
 
   case 47:
-#line 198 "parser.y"
+#line 216 "parser.y"
     { (yyval.astnode) = createNode(NODE_ADDITION, (ASTNode*[]){(yyvsp[(1) - (3)].astnode), (yyvsp[(3) - (3)].astnode), NULL}, NULL); }
     break;
 
   case 48:
-#line 199 "parser.y"
+#line 217 "parser.y"
     { (yyval.astnode) = createNode(NODE_SUBTRACTION, (ASTNode*[]){(yyvsp[(1) - (3)].astnode), (yyvsp[(3) - (3)].astnode), NULL}, NULL); }
     break;
 
   case 49:
-#line 200 "parser.y"
+#line 218 "parser.y"
     { (yyval.astnode) = createNode(NODE_MULTIPLICATION, (ASTNode*[]){(yyvsp[(1) - (3)].astnode), (yyvsp[(3) - (3)].astnode), NULL}, NULL); }
     break;
 
   case 50:
-#line 201 "parser.y"
+#line 219 "parser.y"
     { (yyval.astnode) = createNode(NODE_DIVISION, (ASTNode*[]){(yyvsp[(1) - (3)].astnode), (yyvsp[(3) - (3)].astnode), NULL}, NULL); }
     break;
 
   case 51:
-#line 202 "parser.y"
+#line 220 "parser.y"
     { (yyval.astnode) = createNode(NODE_LESS_THAN, (ASTNode*[]){(yyvsp[(1) - (3)].astnode), (yyvsp[(3) - (3)].astnode), NULL}, NULL); }
     break;
 
   case 52:
-#line 203 "parser.y"
+#line 221 "parser.y"
     { (yyval.astnode) = createNode(NODE_GREATER_THAN, (ASTNode*[]){(yyvsp[(1) - (3)].astnode), (yyvsp[(3) - (3)].astnode), NULL}, NULL); }
     break;
 
   case 53:
-#line 204 "parser.y"
+#line 222 "parser.y"
     { (yyval.astnode) = createNode(NODE_LOGICAL_OR, (ASTNode*[]){(yyvsp[(1) - (3)].astnode), (yyvsp[(3) - (3)].astnode), NULL}, NULL); }
     break;
 
   case 54:
-#line 205 "parser.y"
+#line 223 "parser.y"
     { (yyval.astnode) = createNode(NODE_LOGICAL_AND, (ASTNode*[]){(yyvsp[(1) - (3)].astnode), (yyvsp[(3) - (3)].astnode), NULL}, NULL); }
     break;
 
   case 55:
-#line 206 "parser.y"
+#line 224 "parser.y"
     { (yyval.astnode) = createNode(NODE_LESS_THAN_EQUAL, (ASTNode*[]){(yyvsp[(1) - (3)].astnode), (yyvsp[(3) - (3)].astnode), NULL}, NULL); }
     break;
 
   case 56:
-#line 207 "parser.y"
+#line 225 "parser.y"
     { (yyval.astnode) = createNode(NODE_GREATER_THAN_EQUAL, (ASTNode*[]){(yyvsp[(1) - (3)].astnode), (yyvsp[(3) - (3)].astnode), NULL}, NULL); }
     break;
 
   case 57:
-#line 208 "parser.y"
+#line 226 "parser.y"
     { (yyval.astnode) = createNode(NODE_EQUAL, (ASTNode*[]){(yyvsp[(1) - (3)].astnode), (yyvsp[(3) - (3)].astnode), NULL}, NULL); }
     break;
 
   case 58:
-#line 209 "parser.y"
+#line 227 "parser.y"
     { (yyval.astnode) = createNode(NODE_NOT_EQUAL, (ASTNode*[]){(yyvsp[(1) - (3)].astnode), (yyvsp[(3) - (3)].astnode), NULL}, NULL); }
     break;
 
   case 59:
-#line 210 "parser.y"
+#line 228 "parser.y"
     { (yyval.astnode) = (yyvsp[(2) - (3)].astnode);  }
     break;
 
   case 60:
-#line 211 "parser.y"
+#line 229 "parser.y"
     {
                //printf("\nValue of $1: %s\n", $1->text);
                (yyval.astnode) = createNode(NODE_TOKEN_IDENTIFIER, astNullChild(), (yyvsp[(1) - (1)].hash_node)); 
@@ -1851,63 +1869,63 @@ yyreduce:
     break;
 
   case 61:
-#line 215 "parser.y"
+#line 233 "parser.y"
     { (yyval.astnode) = (yyvsp[(1) - (1)].astnode); }
     break;
 
   case 62:
-#line 216 "parser.y"
-    { (yyval.astnode) = createNode(NODE_LITERAL_INT, NULL,    NULL); }
+#line 234 "parser.y"
+    { (yyval.astnode) = createNode(NODE_LITERAL_INT,     astNullChild(),  (yyvsp[(1) - (1)].hash_node)); }
     break;
 
   case 63:
-#line 217 "parser.y"
-    { (yyval.astnode) = createNode(NODE_LITERAL_CHAR, NULL,  NULL); }
+#line 235 "parser.y"
+    { (yyval.astnode) = createNode(NODE_LITERAL_CHAR,   astNullChild(),  (yyvsp[(1) - (1)].hash_node)); }
     break;
 
   case 64:
-#line 218 "parser.y"
-    { (yyval.astnode) = createNode(NODE_LITERAL_REAL, NULL,  NULL); }
+#line 236 "parser.y"
+    { (yyval.astnode) = createNode(NODE_LITERAL_REAL,   astNullChild(),  (yyvsp[(1) - (1)].hash_node)); }
     break;
 
   case 65:
-#line 219 "parser.y"
-    { (yyval.astnode) = createNode(NODE_LITERAL_FALSE, NULL,NULL); }
+#line 237 "parser.y"
+    { (yyval.astnode) = createNode(NODE_LITERAL_FALSE, NULL,  NULL); }
     break;
 
   case 66:
-#line 220 "parser.y"
-    { (yyval.astnode) = createNode(NODE_LITERAL_TRUE, NULL,  NULL); }
+#line 238 "parser.y"
+    { (yyval.astnode) = createNode(NODE_LITERAL_TRUE,   NULL,  NULL); }
     break;
 
   case 67:
-#line 221 "parser.y"
+#line 239 "parser.y"
     { (yyval.astnode) = (yyvsp[(1) - (1)].astnode); }
     break;
 
   case 68:
-#line 224 "parser.y"
+#line 242 "parser.y"
     { (yyval.astnode) = createNode(NODE_FUNC_CALL, (ASTNode*[]){createNode(NODE_TYPE, NULL,NULL), (yyvsp[(3) - (4)].astnode), NULL}, NULL); }
     break;
 
   case 69:
-#line 227 "parser.y"
+#line 245 "parser.y"
     { (yyval.astnode) = NULL; }
     break;
 
   case 70:
-#line 228 "parser.y"
+#line 246 "parser.y"
     { (yyval.astnode) = createNode(NODE_ARGS_LIST, (ASTNode*[]){(yyvsp[(1) - (3)].astnode), (yyvsp[(3) - (3)].astnode), NULL}, NULL); }
     break;
 
   case 71:
-#line 229 "parser.y"
+#line 247 "parser.y"
     { (yyval.astnode) = createNode(NODE_ARGS_LIST, (ASTNode*[]){(yyvsp[(1) - (1)].astnode), NULL}, NULL); }
     break;
 
 
 /* Line 1267 of yacc.c.  */
-#line 1911 "y.tab.c"
+#line 1929 "y.tab.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -2121,7 +2139,7 @@ yyreturn:
 }
 
 
-#line 231 "parser.y"
+#line 249 "parser.y"
  
 int yyerror() {
   fprintf(stderr,"Syntax error in line %d\n", getLineNumber());

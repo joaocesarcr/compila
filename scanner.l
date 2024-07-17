@@ -64,17 +64,42 @@ int lineNumber = 1;
 "false"                     { return LIT_FALSE; }
 
 [a-zA-Z_][a-zA-Z0-9_]*      { 
-                               HASH_NODE* entry = hashInsert(TK_IDENTIFIER, yytext);
-                               yylval.hash_node = entry;
-                               return TK_IDENTIFIER;
+                              HASH_NODE* entry = hashInsert(TK_IDENTIFIER, yytext);
+                              yylval.hash_node = entry;
+                              return TK_IDENTIFIER;
                             }
 
-[0-9]+                      { hashInsert(LIT_INT,yytext); return LIT_INT; }
-'[^'\n]'                    { hashInsert(LIT_CHAR,yytext); return LIT_CHAR; }
-[0-9]+\.[0-9]+              { hashInsert(LIT_REAL,yytext); return LIT_REAL; }
-[0-9]+\.                    { hashInsert(LIT_REAL,yytext); return LIT_REAL; }
-\.[0-9]+                    { hashInsert(LIT_REAL,yytext); return LIT_REAL; }
-\"([^"\n]|\\\")*\"          { hashInsert(LIT_STRING,yytext); return LIT_STRING; }
+[0-9]+                      { 
+                              HASH_NODE* entry = hashInsert(LIT_INT, yytext);
+                              yylval.hash_node = entry;
+                              return LIT_INT; 
+                            }
+'[^'\n]'                    { 
+                              HASH_NODE* entry = hashInsert(LIT_CHAR, yytext);
+                              yylval.hash_node = entry;
+                              return LIT_CHAR; 
+                            }
+
+[0-9]+\.[0-9]+              { 
+                              HASH_NODE* entry = hashInsert(LIT_REAL, yytext);
+                              yylval.hash_node = entry; 
+                              return LIT_REAL; 
+                            }
+[0-9]+\.                    {
+                              HASH_NODE* entry = hashInsert(LIT_REAL, yytext);
+                              yylval.hash_node = entry;
+                              return LIT_REAL; 
+                            }
+\.[0-9]+                    {
+                              HASH_NODE* entry = hashInsert(LIT_REAL, yytext);
+                              yylval.hash_node = entry;  
+                              return LIT_REAL; 
+                            }
+\"([^"\n]|\\\")*\"          { 
+                              HASH_NODE* entry = hashInsert(LIT_STRING, yytext);
+                              yylval.hash_node = entry;
+                              return LIT_STRING; 
+                            }
 
 [ \t]                       {}
 

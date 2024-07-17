@@ -33,13 +33,39 @@ void printNode(ASTNode* node) {
     if (!node) return;
     if (!node->type) return;
 
-    if (node->type == NODE_TOKEN_IDENTIFIER) { 
-      printf("%s", NodeTypeNames[node->type]);
-      printf(": %s\n",(node->value)->text);
+    if (!isListType(node->type)) { 
+        printf("%s", NodeTypeNames[node->type]);
+        switch (node->type) { 
+            case NODE_TOKEN_IDENTIFIER: printf(": %s",node->value->text); break;
+            case NODE_LITERAL_INT:      printf(": %s",node->value->text); break;
+            case NODE_LITERAL_CHAR:     printf(": %s",node->value->text); break;
+            case NODE_LITERAL_REAL:     printf(": %s",node->value->text); break;
+            case NODE_LITERAL_STRING:   printf(": %s",node->value->text); break;
+            case NODE_LITERAL_FALSE:    printf(": false");break;
+            case NODE_LITERAL_TRUE:     printf(": true"); break;
+            case NODE_DECLARATIONS_LIST:     printf(": true"); break;
+            default: ;
+        }
+        printf("\n");
     }
-    else printf("%s\n", NodeTypeNames[node->type]);
 }
 
+void printProgram(ASTNode* node) {
+    switch (node->type) { 
+        case NODE_TOKEN_IDENTIFIER: printf(": %s",node->value->text); break;
+        case NODE_LITERAL_INT:      printf(": %s",node->value->text); break;
+        case NODE_LITERAL_CHAR:     printf(": %s",node->value->text); break;
+        case NODE_LITERAL_REAL:     printf(": %s",node->value->text); break;
+        case NODE_LITERAL_STRING:   printf(": %s",node->value->text); break;
+        case NODE_LITERAL_FALSE:    printf(": false");break;
+        case NODE_LITERAL_TRUE:     printf(": true"); break;
+        case NODE_DECLARATIONS_LIST:     printf(": true"); break;
+        default: ;
+    }
+    printf("\n");
+
+
+}
 void printAST(ASTNode* root) {
   printTree(root,0);
 }
@@ -52,13 +78,30 @@ void printTree(ASTNode* root, int level) {
     printIndentation(level);
     printNode(root);
 
+    int toAdd= 1;
     for (int i = 0; i < MAX_CHILDREN; i++) {
         if (root->children[i]) {
-            printTree(root->children[i], level + 1);
+            if (isListType(root->children[i]->type)) toAdd =0;
+            printTree(root->children[i], level + toAdd);
+            toAdd = 1;
         } else break;
     }
 }
 
+int isListType(NodeType type) {
+  NodeType lists[] = {NODE_DECLARATIONS_LIST,
+                   NODE_PARAM_LIST,
+                   NODE_VALUES_LIST,
+                   NODE_COMMANDS_LIST,
+                   NODE_ARGS_LIST,
+  };
+  int s = 5;
+  for (int i = 0; i < s; i++) {
+      if (lists[i] == type) return 1;
+  }
+  return 0;
+  
+}
 void printIndentation(int level) {
     for (int i = 0; i < level; i++) {
         printf("  ");
