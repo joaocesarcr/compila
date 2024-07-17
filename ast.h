@@ -13,17 +13,21 @@ typedef enum {
     NODE_VECTOR_DECLARATION_AND_ASIGN,
     NODE_FUNC_DECLARATION,
     NODE_PARAM_LIST,
+    NODE_PARAM_LIST_EMPTY,
     NODE_PARAM,
     NODE_INITIAL_VALUE,
     NODE_VALUES_LIST,
     NODE_BLOCK,
+    NODE_BLOCK_EMPTY,
     NODE_COMMANDS_LIST,
     NODE_COMMAND,
     NODE_ASSIGNMENT,
-    NODE_VECTOR,
+    NODE_VECTOR_INT,
+    NODE_VECTOR_TK,
     NODE_CONTROL_FLOW,
     NODE_EXPRESSION,
     NODE_FUNC_CALL,
+    NODE_FUNC_CALL_EMPTY,
     NODE_ARGS_LIST,
     NODE_ADDITION,
     NODE_SUBTRACTION,
@@ -52,8 +56,10 @@ typedef enum {
     NODE_KW_FLOAT,
     NODE_KW_BOOL,
     NODE_KW_PRINT,
+    NODE_KW_PRINT_STRING,
     NODE_KW_RETURN,
     NODE_KW_IF,
+    NODE_IF_CONTROL,
     NODE_KW_IF_ELSE,
     NODE_KW_WHILE,
     NODE_EMPTY,
@@ -67,19 +73,21 @@ typedef struct ASTNode_s {
 } ASTNode;
 
 ASTNode* createNode(NodeType type, ASTNode* children[MAX_CHILDREN], HASH_NODE* value);
-void printNode();
 void printTree();
 int isListType(NodeType type);
+int isKW(NodeType type);
+int isLitType(NodeType type);
+int isOP(NodeType type);
 ASTNode** astNullChild();
 
-void printNode(ASTNode* node);
+void printNode(ASTNode* node,int level);
 void printTree(ASTNode* root, int level);
-
-void printProgram(ASTNode* node);
+void printOperation(ASTNode* node,int level);
 void printAST(ASTNode* root);
 void printIndentation(int level);
 
-
+void printNodeOLD(ASTNode* node);
+void printTreeOLD(ASTNode* root, int level);
 const char* NodeTypeNames[] = {
     "NODE_PROGRAM",
     "NODE_DECLARATIONS_LIST",
@@ -89,17 +97,21 @@ const char* NodeTypeNames[] = {
     "NODE_VECTOR_DECLARATION_AND_ASIGN",
     "NODE_FUNC_DECLARATION",
     "NODE_PARAM_LIST",
+    "NODE_PARAM_LIST_EMPTY",
     "NODE_PARAM",
     "NODE_INITIAL_VALUE",
     "NODE_VALUES_LIST",
     "NODE_BLOCK",
+    "NODE_BLOCK_EMPTY",
     "NODE_COMMANDS_LIST",
     "NODE_COMMAND",
     "NODE_ASSIGNMENT",
-    "NODE_VECTOR",
+    "NODE_VECTOR_INT",
+    "NODE_VECTOR_TK",
     "NODE_CONTROL_FLOW",
     "NODE_EXPRESSION",
     "NODE_FUNC_CALL",
+    "NODE_FUNC_CALL_EMPTY",
     "NODE_ARGS_LIST",
     "NODE_ADDITION",
     "NODE_SUBTRACTION",
@@ -128,8 +140,10 @@ const char* NodeTypeNames[] = {
     "NODE_KW_FLOAT",
     "NODE_KW_BOOL",
     "NODE_KW_PRINT",
+    "NODE_KW_PRINT_STRING",
     "NODE_KW_RETURN",
     "NODE_KW_IF",
+    "NODE_IF_CONTROL",
     "NODE_KW_IF_ELSE",
     "NODE_KW_WHILE",
     "NODE_EMPTY",

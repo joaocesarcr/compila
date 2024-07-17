@@ -20,12 +20,8 @@ int main(int argc, char** argv) {
   if (argc) 
       yyin = fopen(argv[1], "r");
   yyparse();
-  hashPrint();
-  printf("Printa\n");
-  printf("Printa ok \n");
-  printf("Parse OK\n");
+  //hashPrint();
   printAST(root);
-  printf("Compilação OK\n");
 
   exit(0);
   }

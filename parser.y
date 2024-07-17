@@ -19,7 +19,7 @@ extern HASH_NODE* hashFind(char* text);
 
 %type <astnode> programa lista_declaracoes declaracao declaracao_variavel declaracao_vetor declaracao_funcao
 %type <astnode> lista_parametros parametro tipo valor_inicial valores_iniciais bloco lista_comandos
-%type <astnode> comando atribuicao vetor controle_fluxo expressao chamada_funcao lista_chamada
+%type <astnode> comando atribuicao vetor controle_fluxo controle_fluxo_if expressao chamada_funcao lista_chamada
 
 %token <token> KW_CHAR           
 %token <token> KW_INT            
@@ -135,12 +135,18 @@ declaracao_funcao: tipo TK_IDENTIFIER '(' lista_parametros ')' bloco { $$ = crea
                                                                                         $6,
                                                                                         NULL},
                                                                                    NULL); }
+                 | tipo TK_IDENTIFIER '(' ')' bloco {$$ = createNode(
+                                                              NODE_FUNC_DECLARATION,
+                                                               (ASTNode*[]){
+                                                                    $1,
+                                                                    createNode(NODE_TOKEN_IDENTIFIER,astNullChild(),$2),
+                                                                    createNode(NODE_PARAM_LIST_EMPTY,astNullChild(),NULL),
+                                                                    $5,
+                                                                    NULL},
+                                                               NULL); }
+
                  ;
 
-lista_parametros: /* vazio */ { $$ = createNode(NODE_EMPTY,astNullChild(),NULL); }
-                | parametro { $$ = createNode(NODE_PARAM_LIST, (ASTNode*[]){$1, NULL}, NULL); }
-                | parametro ',' lista_parametros { $$ = createNode(NODE_PARAM_LIST, (ASTNode*[]){$1, $3, NULL,NULL,NULL}, NULL); }
-                ;
 
 parametro: tipo TK_IDENTIFIER { $$ = createNode(NODE_PARAM, (ASTNode*[]){
          $1,
@@ -162,7 +168,7 @@ valor_inicial: LIT_INT { $$ = createNode(NODE_LITERAL_INT,       astNullChild(),
              ;
 
 valores_iniciais: valor_inicial { $$ = $1 ;}
-                | valores_iniciais valor_inicial { $$ = createNode(NODE_VALUES_LIST, (ASTNode*[]){
+                | valor_inicial  valores_iniciais{ $$ = createNode(NODE_VALUES_LIST, (ASTNode*[]){
                                                                                           $1,
                                                                                           $2,
                                                                                           NULL,
@@ -173,18 +179,15 @@ valores_iniciais: valor_inicial { $$ = $1 ;}
                 ;
 
 bloco: '{' lista_comandos '}' { $$ = createNode(NODE_BLOCK, (ASTNode*[]){$2, NULL,NULL,NULL,NULL}, NULL); }
+     | '{' '}'  { $$ = createNode(NODE_BLOCK_EMPTY, astNullChild(), NULL); }
      ;
 
-lista_comandos: /* vazio */ { $$ = NULL; }
-              | lista_comandos comando{ $$ = createNode(NODE_COMMANDS_LIST, (ASTNode*[]){$1, $2, NULL}, NULL); }
-              | comando { $$ = $1;}
-              ;
 
 comando: atribuicao { $$ = $1; }
        | controle_fluxo { $$ = $1; }
        | KW_READ tipo TK_IDENTIFIER ';' { $$ = createNode(NODE_KW_READ, (ASTNode*[]){$2, createNode(NODE_TOKEN_IDENTIFIER, astNullChild(),$3), NULL}, NULL); }
+       | KW_PRINT LIT_STRING ';'     { $$ = createNode(NODE_KW_PRINT_STRING, (ASTNode*[]){createNode(NODE_LITERAL_STRING, astNullChild(), $2), NULL}, NULL); }
        | KW_PRINT tipo expressao ';' { $$ = createNode(NODE_KW_PRINT, (ASTNode*[]){$2, $3, NULL}, NULL); }
-       | KW_PRINT LIT_STRING ';'     { $$ = createNode(NODE_KW_PRINT, (ASTNode*[]){createNode(NODE_LITERAL_STRING, astNullChild(), $2)}, NULL); }
        | KW_RETURN expressao ';'     { $$ = createNode(NODE_KW_RETURN, (ASTNode*[]){$2, NULL}, NULL); }
        | bloco { $$ = $1; }
        | ';' { $$ = NULL; }
@@ -204,14 +207,22 @@ atribuicao: TK_IDENTIFIER '=' expressao ';' { $$ = createNode(
           | vetor '=' expressao ';' { $$ = createNode(NODE_ASSIGNMENT, (ASTNode*[]){$1, $3, NULL},NULL); }
           ;
 
-vetor: TK_IDENTIFIER '[' LIT_INT ']' { $$ = createNode(NODE_VECTOR, (ASTNode*[]){createNode(NODE_TYPE, NULL,NULL), createNode(NODE_INITIAL_VALUE, NULL, NULL), NULL}, NULL); }
-     | TK_IDENTIFIER '[' TK_IDENTIFIER ']' { $$ = createNode(NODE_VECTOR, (ASTNode*[]){createNode(NODE_TYPE, NULL,NULL), createNode(NODE_TYPE, NULL, NULL), NULL}, NULL); }
+vetor: TK_IDENTIFIER '[' LIT_INT ']' { $$ = createNode(NODE_VECTOR_INT, (ASTNode*[]){createNode(NODE_TOKEN_IDENTIFIER, astNullChild(),$1),
+                                                                                     createNode(NODE_LITERAL_INT, astNullChild(), $3),NULL,NULL,NULL}, NULL); }
+     | TK_IDENTIFIER '[' TK_IDENTIFIER ']' { $$ = createNode(NODE_VECTOR_TK, (ASTNode*[]){ 
+                                                                                 createNode(NODE_TOKEN_IDENTIFIER, astNullChild(),$1),
+                                                                                 createNode(NODE_TOKEN_IDENTIFIER, astNullChild(),$3),
+                                                                                 NULL,NULL,NULL},
+                                                                               NULL); }
      ;
 
-controle_fluxo: KW_IF '(' expressao ')' comando { $$ = createNode(NODE_KW_IF, (ASTNode*[]){$3, $5, NULL},NULL); }
-              | KW_IF '(' expressao ')' comando KW_ELSE comando { $$ = createNode(NODE_KW_IF_ELSE, (ASTNode*[]){$3, $5, $7, NULL}, NULL); }
-              | KW_WHILE '(' expressao ')' comando { $$ = createNode(NODE_KW_WHILE, (ASTNode*[]){$3, $5, NULL}, NULL); }
-              ;
+controle_fluxo: KW_IF '(' expressao ')' comando controle_fluxo_if { $$ = createNode(NODE_IF_CONTROL,(ASTNode*[]){$3, $5, $6,NULL,NULL},NULL); }
+    | KW_WHILE '(' expressao ')' bloco { $$ = createNode(NODE_KW_WHILE, (ASTNode*[]){$3, $5, NULL}, NULL); }
+    ;
+
+controle_fluxo_if: { $$ = NULL;}
+    | KW_ELSE comando { $$ = $2; }
+    ;
 
 expressao: expressao '+' expressao { $$ = createNode(NODE_ADDITION, (ASTNode*[]){$1, $3, NULL}, NULL); }
          | expressao '-' expressao { $$ = createNode(NODE_SUBTRACTION, (ASTNode*[]){$1, $3, NULL}, NULL); }
@@ -239,13 +250,25 @@ expressao: expressao '+' expressao { $$ = createNode(NODE_ADDITION, (ASTNode*[])
          | chamada_funcao { $$ = $1; }
          ;
 
-chamada_funcao: TK_IDENTIFIER '(' lista_chamada ')' { $$ = createNode(NODE_FUNC_CALL, (ASTNode*[]){createNode(NODE_TYPE, NULL,NULL), $3, NULL}, NULL); }
               ;
+
+lista_comandos: comando { $$ = $1;}
+              | comando lista_comandos { $$ = createNode(NODE_COMMANDS_LIST, (ASTNode*[]){$1, $2, NULL}, NULL); }
+              ;
+
 
 lista_chamada: /* empty */ { $$ = NULL; }
              | expressao ',' lista_chamada { $$ = createNode(NODE_ARGS_LIST, (ASTNode*[]){$1, $3, NULL}, NULL); }
              | expressao { $$ = createNode(NODE_ARGS_LIST, (ASTNode*[]){$1, NULL}, NULL); }
              ;
+
+lista_parametros: parametro ',' lista_parametros { $$ = createNode(NODE_PARAM_LIST, (ASTNode*[]){$1, $3, NULL,NULL,NULL}, NULL); }
+                | parametro { $$ = $1;}
+                ;
+
+
+chamada_funcao: TK_IDENTIFIER '(' lista_chamada ')' { $$ = createNode(NODE_FUNC_CALL, (ASTNode*[]){createNode(NODE_TOKEN_IDENTIFIER, astNullChild(),$1), $3, NULL}, NULL); }
+
 %% 
 int yyerror() {
   fprintf(stderr,"Syntax error in line %d\n", getLineNumber());
