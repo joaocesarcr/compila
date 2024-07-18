@@ -13,6 +13,7 @@
 
 ASTNode* root;
 extern HASH_NODE* hashFind(char* text);
+extern void check_and_set_declarations(ASTNode *node);
 %}
 
 %union {
@@ -82,7 +83,7 @@ extern HASH_NODE* hashFind(char* text);
 %%
 
 
-programa: lista_declaracoes { root = createNode(NODE_PROGRAM, (ASTNode*[]){$1, NULL}, NULL); }
+programa: lista_declaracoes { root = createNode(NODE_PROGRAM, (ASTNode*[]){$1, NULL}, NULL); check_and_set_declarations(root); }
         ;
 
 lista_declaracoes: declaracao { $$ = createNode(NODE_DECLARATIONS_LIST, (ASTNode*[]){$1, NULL}, NULL); }
