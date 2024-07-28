@@ -83,7 +83,7 @@ extern void check_and_set_declarations(ASTNode *node);
 %%
 
 
-programa: lista_declaracoes { root = createNode(NODE_PROGRAM, (ASTNode*[]){$1, NULL}, NULL); check_and_set_declarations(root); }
+programa: lista_declaracoes { root = createNode(NODE_PROGRAM, (ASTNode*[]){$1, NULL}, NULL); check_and_set_declarations(root); check_undeclared_variables(root); }
         ;
 
 lista_declaracoes: declaracao { $$ = createNode(NODE_DECLARATIONS_LIST, (ASTNode*[]){$1, NULL}, NULL); }

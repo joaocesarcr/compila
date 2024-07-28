@@ -19,6 +19,7 @@ linhas
 
 int main ()
   {
+  undeclared = 2;
   number = 0;
   d = 5;
   d = d - i;
