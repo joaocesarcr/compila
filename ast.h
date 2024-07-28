@@ -66,29 +66,30 @@ typedef enum {
 } NodeType;
 
 typedef struct ASTNode_s {
-    NodeType type;
-    struct ASTNode_s* children[MAX_CHILDREN];
+    NodeType astNodeType;
+    struct ASTNode_s *children[MAX_CHILDREN];
     // Additional fields can be added as necessary
-    HASH_NODE* value;  // For identifiers, literals, etc.
+    HASH_NODE *hashNode; // For identifiers, literals, etc.
 } ASTNode;
 
-ASTNode* createNode(NodeType type, ASTNode* children[MAX_CHILDREN], HASH_NODE* value);
+ASTNode *createNode(NodeType type, ASTNode *children[MAX_CHILDREN],
+                    HASH_NODE *hashNode);
 void printTree();
-int isListType(NodeType type);
-int isKW(NodeType type);
-int isLitType(NodeType type);
-int isOP(NodeType type);
-ASTNode** astNullChild();
+int isListType(NodeType astNodeType);
+int isKW(NodeType astNodeType);
+int isLitType(NodeType astNodeType);
+int isOP(NodeType astNodeType);
+ASTNode **astNullChild();
 
-void printNode(ASTNode* node,int level);
-void printTree(ASTNode* root, int level);
-void printOperation(ASTNode* node,int level);
-void printAST(ASTNode* root);
+void printNode(ASTNode *node, int level);
+void printTree(ASTNode *root, int level);
+void printOperation(ASTNode *node, int level);
+void printAST(ASTNode *root);
 void printIndentation(int level);
 
-void printNodeOLD(ASTNode* node);
-void printTreeOLD(ASTNode* root, int level);
-const char* NodeTypeNames[] = {
+void printNodeOLD(ASTNode *node);
+void printTreeOLD(ASTNode *root, int level);
+const char *NodeTypeNames[] = {
     "NODE_PROGRAM",
     "NODE_DECLARATIONS_LIST",
     "NODE_DECLARATION",

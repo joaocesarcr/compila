@@ -22,6 +22,10 @@ int main ()
   undeclared = 2;
   number = 0;
   d = 5;
+  c[5] = 10;
+  c[i] = 10;
+  v[b] = 10;
+  d = f + b;
   d = d - i;
   d = 5;
   v[d] = 55;
