@@ -449,6 +449,11 @@ void printNodeOLD(ASTNode *node) {
             printf("LITERAL_STRING: %s\n",
                    node->hashNode ? node->hashNode->text : "NULL");
             break;
+        case NODE_TOKEN_IDENTIFIER:
+            printf("TOKEN_IDENTIFIER: %s\n",
+                   node->hashNode ? node->hashNode->text : "NULL");
+            break;
+
         // Add cases for other node types if necessary
         default:
             printf("NodeType: %s\n", NodeTypeNames[node->astNodeType]);

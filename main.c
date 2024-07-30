@@ -21,7 +21,7 @@ int main(int argc, char **argv) {
         yyin = fopen(argv[1], "r");
     yyparse();
     // hashPrint();
-    // printAST(root);
+    printTreeOLD(root, 0);
 
     exit(0);
 }

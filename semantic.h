@@ -13,7 +13,17 @@ void check_operand(ASTNode *node);
 void check_usage(ASTNode *node);
 void check_and_set_declarations(ASTNode *node);
 void check_undeclared();
+int setParamQtt(ASTNode *node, int qtt);
+int checkListType(ASTNode *node, NodeType type, int index,
+                  HASH_NODE *declaration);
+NodeType getType(ASTNode *node);
+void checkFunctions(ASTNode *node, ASTNode *root);
+int checkFunctionCall(ASTNode *node, ASTNode *root);
+int isCompatible(NodeType fType, NodeType sType);
+ASTNode *findFunctionDeclaration(ASTNode *node, HASH_NODE *tokenHashNode);
+void setExpressionValue(ASTNode *node, ASTNode *parent);
 void printIdentifiersTypeNature(ASTNode *node, ASTNode *otherNode);
+void printOpError(ASTNode *node, char op);
 
 #endif /*                                                                          \
 • variáveis redeclaradas X                                                      \
