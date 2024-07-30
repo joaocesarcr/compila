@@ -43,6 +43,12 @@ void printNode(ASTNode *node, int level) {
     // printIndentation(level);
 
     switch (node->astNodeType) {
+        case NODE_FUNC_CALL:
+            printf("%s(...)", node->children[0]->hashNode->text);
+            break;
+        case NODE_FUNC_CALL_EMPTY:
+            printf("%s()", node->children[0]->hashNode->text);
+            break;
         case NODE_EMPTY:
             break;
         case NODE_BLOCK:
@@ -62,18 +68,18 @@ void printNode(ASTNode *node, int level) {
         case NODE_KW_BOOL:
             printf("bool ");
             break;
+        case NODE_VECTOR_INT:
+            printf("%s[%d]", node->children[0]->hashNode->text,
+                   atoi(node->children[1]->hashNode->text));
+            break;
+        case NODE_VECTOR_TK:
+            printf("%s[%s]", node->children[0]->hashNode->text,
+                   node->children[1]->hashNode->text);
+            break;
         case NODE_LITERAL_INT:
-            printf("%s", node->hashNode->text);
-            break;
         case NODE_LITERAL_STRING:
-            printf("%s", node->hashNode->text);
-            break;
         case NODE_TOKEN_IDENTIFIER:
-            printf("%s", node->hashNode->text);
-            break;
         case NODE_LITERAL_CHAR:
-            printf("%s", node->hashNode->text);
-            break;
         case NODE_LITERAL_REAL:
             printf("%s", node->hashNode->text);
             break;
@@ -433,6 +439,17 @@ void printNodeOLD(ASTNode *node) {
 
     printf("%p ", node);
     switch (node->astNodeType) {
+        case NODE_FUNC_CALL:
+            printf("%s(...)\n", node->children[0]->hashNode
+                                    ? node->children[0]->hashNode->text
+                                    : "NULL");
+
+            break;
+        case NODE_FUNC_CALL_EMPTY:
+            printf("%s()\n", node->children[0]->hashNode
+                                 ? node->children[0]->hashNode->text
+                                 : "NULL");
+            break;
         case NODE_LITERAL_INT:
             printf("LITERAL_INT: %s\n",
                    node->hashNode ? node->hashNode->text : "NULL");
@@ -453,6 +470,14 @@ void printNodeOLD(ASTNode *node) {
             printf("TOKEN_IDENTIFIER: %s\n",
                    node->hashNode ? node->hashNode->text : "NULL");
             break;
+            /*
+        case NODE_LITERAL_TRUE:
+            printf("true\n");
+            break;
+        case NODE_LITERAL_FALSE:
+            printf("true\n");
+            break;
+            */
 
         // Add cases for other node types if necessary
         default:

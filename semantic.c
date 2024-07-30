@@ -5,14 +5,12 @@
 #include <stdlib.h>
 
 /*
-Definições Semânticas:
-• Há três tipos diferentes de identificadores:
-escalares, vetores, funções
-• Há três tipos de dados incompatíveis entre si:
-reais, inteiros e booleanos
-• Ha cinco tipos de literais: reais, inteiros, , true/false, caracteres, strings
-// Literais reais somente podem ser usados em expressões, variáveis, parâmetros
-// ou outros processamentos declarados com esse tipo (real)
+ * declarations and usage:
+ *   arrays with index
+ *   function with param
+ *   comparing types on assignment
+ *   comparing param/assingment list
+ *   missing return type
  */
 int SemanticErrors = 0;
 
@@ -30,8 +28,12 @@ void check_semantic(ASTNode *root) {
     check_and_set_declarations(root);
     check_undeclared_variables(root);
     check_operand(root);
-    printf("Check usage: \n");
     check_usage(root);
+    checkNodes(root, root);
+    if (SemanticErrors) {
+        printf("Total of %d semantic errors\n", SemanticErrors);
+        exit(4);
+    }
 }
 
 int isDeclaration(NodeType type) {
@@ -145,21 +147,57 @@ int checkFunctionCall(ASTNode *node, ASTNode *declaration) {
 
     // Check if the func call has the same number of parameters
     HASH_NODE *tkid = node->children[0]->hashNode;
-    int qttDef = atoi(declaration->children[2]->hashNode->text);
-    int qttCal = setParamQtt(node->children[1], 0);
+    int qttDef;
+    if ((node->astNodeType == NODE_VECTOR_DECLARATION) ||
+        node->astNodeType == NODE_VECTOR_DECLARATION_AND_ASIGN) {
+        qttDef = atoi(declaration->children[2]->hashNode->text);
+    } else {
+        qttDef = getParamQtt(node->children[1], 0);
+    }
+    int qttCal = getParamQtt(node->children[1], 0);
     if (qttCal != qttDef) {
         printf(
             "SEMANTIC ERROR: %s call must have %d parameters. Called with %d\n",
             tkid->text, qttDef, qttCal);
     }
 
+    checkFuncParamType(node->children[1], declaration->children[2],
+                       declaration->children[1]->hashNode, 0);
     // Check if the type of each list element is compatible with definition
-    checkListType(node->children[1], declaration->children[0]->astNodeType, 0,
-                  declaration->children[1]->hashNode);
+    // checkListType(node->children[1], declaration->children[0]->astNodeType,
+    // 0, declaration->children[1]->hashNode);
 }
 
-int checkListType(ASTNode *node, NodeType type, int index,
-                  HASH_NODE *declaration) {
+int checkFuncParamType(ASTNode *call, ASTNode *def, HASH_NODE *tkid,
+                       int index) {
+    // checks if the function call satisfies its definition
+    if ((!def->children[0]) && (!(call->children[0]))) {
+        return 1;
+    }
+    if (((def->children[0]) && (!(call->children[0]))) ||
+        ((!def->children[0]) && (call->children[0]))) {
+        printf("SEMANTIC ERROR: func call size doesnt match with def\n");
+        return 0;
+    }
+
+    if (isCompatible(getType(def->children[0]), getType(call->children[0]))) {
+        if (def->children[1] && call->children[1]) {
+            checkFuncParamType(call->children[1], def->children[1], tkid,
+                               index + 1);
+        }
+        return 1;
+    } else {
+        printf("SEMANTIC ERROR: func %s param %d expected to be of type ",
+               tkid->text, index);
+        printf("%s, but found %s instead\n",
+               NodeTypeNames[getType(def->children[0])],
+               NodeTypeNames[getType(call->children[0])]);
+        return 0;
+    }
+}
+
+int checkVectorTypes(ASTNode *node, NodeType type, int index,
+                     HASH_NODE *declaration) {
     // percore a lita e verifica se os elementos functionam com o tipo
     // node: inicio da lista de parametros
     // type: tipo esperado
@@ -197,16 +235,19 @@ int checkListType(ASTNode *node, NodeType type, int index,
                 printf("  %s is compatible with %s\n", NodeTypeNames[nodeType],
                        NodeTypeNames[type]);
 
-            return checkListType(node->children[1], type, index + 1,
-                                 declaration);
+            return checkVectorTypes(node->children[1], type, index + 1,
+                                    declaration);
         } else {
             printf("SEMANTIC ERROR: %s[%d] expected to be %s, but "
                    "got %s instead\n",
                    declaration->text, index, NodeTypeNames[type],
-                   NodeTypeNames[node->children[1]->astNodeType]);
+                   NodeTypeNames[node->children[0]->astNodeType]);
+            SemanticErrors++;
             return 0;
         }
     } else { // Se final de lista, compara 0
+        return (isCompatible(node->children[0]->hashNode->nature, type));
+        /*
         if (isCompatible(node->children[0]->hashNode->nature, type)) {
             return 1;
         } else {
@@ -217,31 +258,42 @@ int checkListType(ASTNode *node, NodeType type, int index,
                        declaration->text, index, NodeTypeNames[type],
                        NodeTypeNames[node->children[0]->astNodeType]);
 
+                SemanticErrors++;
                 return 0;
             }
         }
+        */
     }
 }
 
-void checkFunctions(ASTNode *node, ASTNode *root) {
+void checkNodes(ASTNode *node, ASTNode *root) {
     // Check all function calls for correct usage;
     int i;
     if (node == NULL)
         return;
+    if ((node->astNodeType == NODE_FUNC_DECLARATION) ||
+        (node->astNodeType == NODE_FUNC_DECLARATION_EMPTY)) {
+        checkFunctionReturn(node, node, node->children[0]->astNodeType);
+    }
+
     if ((node->astNodeType == NODE_FUNC_CALL) ||
         (node->astNodeType == NODE_FUNC_CALL_EMPTY)) {
+
         ASTNode *declaration =
             findFunctionDeclaration(root, node->children[0]->hashNode);
-        if (!declaration) {
-            printf("Function \"%s\" was not defined\n",
-                   node->children[0]->hashNode->text);
+        if (declaration) {
+            checkFunctionCall(node, declaration);
         }
 
-        else
-            checkFunctionCall(node, declaration);
+        else {
+            printf("Function \"%s\" was not defined\n",
+                   node->children[0]->astNodeType == NODE_TOKEN_IDENTIFIER
+                       ? node->children[0]->hashNode->text
+                       : NodeTypeNames[node->children[0]->astNodeType]);
+        }
     }
     if (node->astNodeType == NODE_VECTOR_DECLARATION_AND_ASIGN) {
-        int paramQtt = setParamQtt(node->children[3], 0);
+        int paramQtt = getParamQtt(node->children[3], 0);
         // printf("VECTOR DECLARED WITH SIZE int cnv %d\n",
         //       atoi(node->children[2]->hashNode->text));
         // printf("VECTOR DECLARED WITH SIZE %s\n",
@@ -251,21 +303,29 @@ void checkFunctions(ASTNode *node, ASTNode *root) {
             printf("SEMANTIC ERROR: trying to assign %d params to %d params "
                    "vector\n",
                    paramQtt, declarationQtt);
+            SemanticErrors++;
         }
-        checkListType(node->children[3], node->children[0]->astNodeType, 0,
-                      node->children[1]->hashNode);
+        checkVectorTypes(node->children[3], node->children[0]->astNodeType, 0,
+                         node->children[1]->hashNode);
     }
 
     if (node->astNodeType == NODE_ASSIGNMENT) {
         if (!isCompatible(getType(node->children[0]),
                           getType(node->children[1]))) {
-            printf("SEMANTIC ERROR: trying to assign %s to type %s\n",
-                   NodeTypeNames[node->children[0]->hashNode->nature],
-                   NodeTypeNames[node->children[1]->astNodeType]);
+            printf("SEMANTIC ERROR: trying to assign ");
+            printNode(node->children[0], 0);
+            printf(" = ");
+            printNode(node->children[1], 0);
+            printf(" of type %s and type %s which are not compatible\n",
+                   NodeTypeNames[getType(node->children[0])],
+                   NodeTypeNames[getType(node->children[1])]);
+            SemanticErrors++;
         }
     }
     for (i = 0; i < MAX_CHILDREN; i++) {
         if (node->children[i]) {
+
+            // Check if function was called with parameters
             ASTNode *child = node->children[i];
             if (child->astNodeType == NODE_TOKEN_IDENTIFIER) {
                 if (child->hashNode->hashNodeType == DECLARED_FUNC) {
@@ -277,12 +337,51 @@ void checkFunctions(ASTNode *node, ASTNode *root) {
                                child->hashNode->text);
                         printf("Called function from node of type %s\n",
                                NodeTypeNames[node->astNodeType]);
+                        SemanticErrors++;
                     }
+                } else if (child->hashNode->hashNodeType == DECLARED_VECTOR) {
+                    // Check if vector was called as vector
+                    if (!((node->astNodeType ==
+                           NODE_VECTOR_DECLARATION_AND_ASIGN) ||
+                          (node->astNodeType == NODE_VECTOR_DECLARATION) ||
+                          (node->astNodeType == NODE_VECTOR_INT) ||
+                          (node->astNodeType == NODE_VECTOR_TK)))
+                        printf("SEMANTIC ERROR: %s is an array and can only be "
+                               "used with indexes\n",
+                               child->hashNode->text);
+                    SemanticErrors++;
                 }
+
                 // Check if function is called with parameters
             }
-            checkFunctions(node->children[i], root);
+            checkNodes(node->children[i], root);
         }
+    }
+}
+ASTNode *checkFunctionReturn(ASTNode *node, ASTNode *funcRoot, NodeType type) {
+    // node: First call: NODE_FUNC_DECLARATION or NODE_FUNC_DECLARATION_EMPTY
+    // Return: the node of the return of the function declared in node
+    if (node == NULL) {
+        return NULL;
+    }
+
+    if (node->astNodeType == NODE_KW_RETURN) {
+        if (!(isCompatible(getType(node->children[0]), type))) {
+            printf("SEMANTIC ERROR: func %s should return %s. Got %s instead\n",
+                   funcRoot->children[1]->hashNode->text,
+                   NodeTypeNames[funcRoot->children[0]->astNodeType],
+                   NodeTypeNames[getType(node->children[0])]);
+            SemanticErrors++;
+        }
+    }
+
+    for (int i = 0; i < MAX_CHILDREN; i++) {
+        if (node->children[i]) {
+            ASTNode *funcReturn =
+                checkFunctionReturn(node->children[i], funcRoot, type);
+        }
+
+        return NULL;
     }
 }
 
@@ -290,9 +389,15 @@ NodeType getType(ASTNode *node) {
     switch (node->astNodeType) {
         default:
             return node->astNodeType;
+        case NODE_PARAM:
+            return getType(node->children[0]);
+
+        case NODE_VECTOR_TK:
+        case NODE_VECTOR_INT:
+            return node->children[0]->hashNode->nature;
         case NODE_FUNC_CALL:
         case NODE_FUNC_CALL_EMPTY:
-            return node->children[0]->astNodeType;
+            return node->children[0]->hashNode->nature;
         case NODE_TOKEN_IDENTIFIER:
             return node->hashNode->nature;
     }
@@ -371,7 +476,8 @@ void check_usage(ASTNode *node) {
             if ((node->children[0]->hashNode->hashNodeType !=
                  DECLARED_VECTOR)) {
                 SemanticErrors++;
-                printf("SEMANTIC ERROR: %s[%s] incorrect vector usage. Indexes "
+                printf("SEMANTIC ERROR: %s[%s] incorrect vector usage. "
+                       "Indexes "
                        "should "
                        "only "
                        "be used on vectors\n",
@@ -385,7 +491,8 @@ void check_usage(ASTNode *node) {
             if ((node->children[0]->hashNode->hashNodeType !=
                  DECLARED_VECTOR)) {
                 SemanticErrors++;
-                printf("SEMANTIC ERROR: %s[%s] incorrect vector usage. Indexes "
+                printf("SEMANTIC ERROR: %s[%s] incorrect vector usage. "
+                       "Indexes "
                        "should "
                        "only "
                        "be used on vectors\n",
@@ -435,8 +542,15 @@ int isCompatible(NodeType fType, NodeType sType) {
         case NODE_LITERAL_STRING:
             return 0;
             break;
+        case NODE_VECTOR_TK:
+        case NODE_VECTOR_INT:
+            if ((sType == NODE_VECTOR_INT) || (sType == NODE_VECTOR_TK) ||
+                (sType == NODE_KW_CHAR))
+                return 1;
+
         case NODE_KW_INT:
-            if (sType == NODE_KW_CHAR)
+            if ((sType == NODE_KW_CHAR) || (sType == NODE_VECTOR_TK) ||
+                (sType == NODE_VECTOR_INT))
                 return 1;
             else
                 return 0;
@@ -451,7 +565,7 @@ int isCompatible(NodeType fType, NodeType sType) {
     }
 }
 
-int setParamQtt(ASTNode *node, int qtt) {
+int getParamQtt(ASTNode *node, int qtt) {
     if (node == NULL) {
         return qtt + 1;
     }
@@ -460,7 +574,7 @@ int setParamQtt(ASTNode *node, int qtt) {
         if ((node->children[1]->astNodeType == NODE_ARGS_LIST) ||
             (node->children[1]->astNodeType == NODE_VALUES_LIST) ||
             (node->children[1]->astNodeType == NODE_PARAM_LIST)) {
-            return setParamQtt(node->children[1], qtt + 1);
+            return getParamQtt(node->children[1], qtt + 1);
         }
     } else
         return qtt + 1;

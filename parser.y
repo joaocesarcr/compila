@@ -83,7 +83,17 @@ extern void check_and_set_declarations(ASTNode *node);
 %%
 
 
-programa: lista_declaracoes { root = createNode(NODE_PROGRAM, (ASTNode*[]){$1, NULL}, NULL); check_and_set_declarations(root); check_undeclared_variables(root); check_operand(root);check_usage(root); checkFunctions(root,root); } ;
+programa: lista_declaracoes { root = createNode(NODE_PROGRAM, (ASTNode*[]){$1, NULL}, NULL);
+        check_semantic(root);
+        /*
+        printTreeOLD(root,0);
+        check_and_set_declarations(root);
+        check_undeclared_variables(root);
+        check_operand(root);
+        check_usage(root);
+        checkNodes(root,root); 
+        */
+        } ;
 
 lista_declaracoes: declaracao { $$ = createNode(NODE_DECLARATIONS_LIST, (ASTNode*[]){$1, NULL}, NULL); }
                 | lista_declaracoes declaracao { $$ = createNode(NODE_DECLARATIONS_LIST, (ASTNode*[]){$1, $2, NULL}, NULL); }
@@ -168,7 +178,7 @@ valor_inicial: LIT_INT { $$ = createNode(NODE_LITERAL_INT,       astNullChild(),
              | LIT_REAL { $$ = createNode(NODE_LITERAL_REAL,     astNullChild(),$1); }
              | LIT_FALSE { $$ = createNode(NODE_LITERAL_FALSE,   astNullChild(),$1); }
              | LIT_TRUE { $$ = createNode(NODE_LITERAL_TRUE,     astNullChild(),$1); }
-             | LIT_STRING { $$ = createNode(NODE_LITERAL_STRING, astNullChild(),$1); }
+             //| LIT_STRING { $$ = createNode(NODE_LITERAL_STRING, astNullChild(),$1); }
              ;
 
 bloco: '{' lista_comandos '}' { $$ = createNode(NODE_BLOCK, (ASTNode*[]){$2, NULL,NULL,NULL,NULL}, NULL); }

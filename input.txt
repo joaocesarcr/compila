@@ -1,84 +1,12 @@
-// UFRGS - Compiladores - Marcelo Johann - 2024/1
-
-char a:'0';
-//int b:0;
-int teste() {}
-int main() {
-  a = teste;
-  //a = 1;
-  //a = b;
-}
-
-/*
-char a:15;
-char a:15;
+//int i[2]:0 0 ;
+int i:0;
 bool b:true;
-char c:'x';
-char d:100;
-int number:'A';
-int i:1;
-int v[10]: 'a' 0'b'0 0 0 0 0 0 0;
-int v2[10]: 'a'0 0 0 0'b'0 0 0 0 0 0 0;
-int matrix[100]; 
-float f:2.5;		// 0.0 .0 0. are all allowed
 
+int main () {
+  b=incn(1,1);
 
-int main ()
-  {
-  i = incn(b,b);
-  undeclared = 2;
-  number = 0;
-  d = 5;
-  c[5] = 10;
-  c[i] = 10;
-  v[b] = 10;
-  d = f + b;
-  d = d - i;
-  d = 5;
-  v[d] = 55;
-  print int v[5];
-  print int d;
-  print char c;
-  i = 2;
-
-  print "Digite um numero: \n";
-  read int d;
-
-  while (i<10)
-    {
-    i = incn(i,1);
-    d = incn(d,d);
-    }
-
-  print "Dobrando algumas vezes d fica ";
-  print int d;
-  print "\n";
-
-  if (a==15)
-    {
-    a = a + 1;
-    print "A era=15\n";
-    }
-    
-  if (i==100)
-    {
-    print "Nao tem como isso...\n";
-    }
-  else
-    print "OK!\n"; 
-  {{}} {}
-
-  a =  incn(a,b);
-  a =  incn(a,b,d,e);
-  }
-  int main() {}
-
-int incn (int x, int n )
-  {
+} 
+int incn (int x, int n ) {
   return x + n;
-
-  }
-
-// end of file
-  
-*/
+}
+//  i[0] = incn(1,1);

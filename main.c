@@ -17,11 +17,15 @@ void initMe(void);
 
 int main(int argc, char **argv) {
     hashInit();
-    if (argc)
+    if (argc) {
         yyin = fopen(argv[1], "r");
+        if (!yyin)
+            exit(1);
+    } else
+        exit(0);
     yyparse();
     // hashPrint();
-    printTreeOLD(root, 0);
+    // printTreeOLD(root, 0);
 
     exit(0);
 }

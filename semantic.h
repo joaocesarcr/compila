@@ -13,13 +13,16 @@ void check_operand(ASTNode *node);
 void check_usage(ASTNode *node);
 void check_and_set_declarations(ASTNode *node);
 void check_undeclared();
-int setParamQtt(ASTNode *node, int qtt);
+int getParamQtt(ASTNode *node, int qtt);
 int checkListType(ASTNode *node, NodeType type, int index,
                   HASH_NODE *declaration);
 NodeType getType(ASTNode *node);
-void checkFunctions(ASTNode *node, ASTNode *root);
+ASTNode *checkFunctionReturn(ASTNode *node, ASTNode *funcRoot, NodeType type);
+void checkNodes(ASTNode *node, ASTNode *root);
 int checkFunctionCall(ASTNode *node, ASTNode *root);
 int isCompatible(NodeType fType, NodeType sType);
+int checkFuncParamType(ASTNode *call, ASTNode *def, HASH_NODE *tkid, int index);
+
 ASTNode *findFunctionDeclaration(ASTNode *node, HASH_NODE *tokenHashNode);
 void setExpressionValue(ASTNode *node, ASTNode *parent);
 void printIdentifiersTypeNature(ASTNode *node, ASTNode *otherNode);
