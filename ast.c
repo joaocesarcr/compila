@@ -4,6 +4,7 @@
  */
 #include "ast.h"
 #include "hash.h"
+#include "utils.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -33,68 +34,112 @@ ASTNode *createNode(NodeType type, ASTNode *children[MAX_CHILDREN],
     return node;
 }
 
+ASTNode **astNullChild() {
+    static ASTNode *nullArray[5] = {NULL, NULL, NULL, NULL, NULL};
+    return nullArray;
+}
+
+void printAST(ASTNode *root) { printTree(root, 0); }
 void printNode(ASTNode *node, int level) {
     if (!node)
         return;
     if (!node->astNodeType)
         return;
 
-    // printf("%s\n ", NodeTypeNames[node->astNodeType]);
-    // printIndentation(level);
+    if (isExpression(node)) {
+        printOp(node);
+    } else {
 
-    switch (node->astNodeType) {
-        case NODE_FUNC_CALL:
-            printf("%s(...)", node->children[0]->hashNode->text);
-            break;
-        case NODE_FUNC_CALL_EMPTY:
-            printf("%s()", node->children[0]->hashNode->text);
-            break;
-        case NODE_EMPTY:
-            break;
-        case NODE_BLOCK:
-            break;
-        case NODE_KW_CHAR:
-            printf("char ");
-            break;
-        case NODE_KW_READ:
-            printf("");
-            break;
-        case NODE_KW_INT:
-            printf("int ");
-            break;
-        case NODE_KW_FLOAT:
-            printf("float ");
-            break;
-        case NODE_KW_BOOL:
-            printf("bool ");
-            break;
-        case NODE_VECTOR_INT:
-            printf("%s[%d]", node->children[0]->hashNode->text,
-                   atoi(node->children[1]->hashNode->text));
-            break;
-        case NODE_VECTOR_TK:
-            printf("%s[%s]", node->children[0]->hashNode->text,
-                   node->children[1]->hashNode->text);
-            break;
-        case NODE_LITERAL_INT:
-        case NODE_LITERAL_STRING:
-        case NODE_TOKEN_IDENTIFIER:
-        case NODE_LITERAL_CHAR:
-        case NODE_LITERAL_REAL:
-            printf("%s", node->hashNode->text);
-            break;
-        case NODE_LITERAL_FALSE:
-            printf("false");
-            break;
-        case NODE_LITERAL_TRUE:
-            printf("true");
-            break;
-        default:;
-            break;
+        // printf("%s\n ", NodeTypeNames[node->astNodeType]);
+        // printIndentation(level);
+
+        switch (node->astNodeType) {
+            case NODE_FUNC_CALL:
+                printf("%s(...)", node->children[0]->hashNode->text);
+                break;
+            case NODE_FUNC_CALL_EMPTY:
+                printf("%s()", node->children[0]->hashNode->text);
+                break;
+            case NODE_EMPTY:
+            case NODE_BLOCK:
+                break;
+            case NODE_KW_CHAR:
+                printf("char ");
+                break;
+            case NODE_KW_READ:
+                printf("read");
+                break;
+            case NODE_KW_INT:
+                printf("int ");
+                break;
+            case NODE_KW_FLOAT:
+                printf("float ");
+                break;
+            case NODE_IF_CONTROL:
+                printf("if (");
+                printNode(node->children[0], 0);
+                printf(")");
+                break;
+            case NODE_KW_IF_ELSE:
+                printf("if (");
+                printNode(node->children[0], 0);
+                printf(")");
+                printf("else (");
+                printNode(node->children[1], 0);
+                printf(")");
+
+            case NODE_KW_BOOL:
+                printf("bool ");
+                break;
+            case NODE_VECTOR_INT:
+                printf("%s[%d]", node->children[0]->hashNode->text,
+                       atoi(node->children[1]->hashNode->text));
+                break;
+            case NODE_VECTOR_TK:
+                printf("%s[%s]", node->children[0]->hashNode->text,
+                       node->children[1]->hashNode->text);
+                break;
+            case NODE_ASSIGNMENT:
+                printNode(node->children[0], 0);
+                printf(" = ");
+                printNode(node->children[1], 0);
+                break;
+
+            case NODE_PARENTHESIS_EXPRESSION:
+                printf("(");
+                printNode(node->children[0], 0);
+                printf(")");
+                break;
+            case NODE_ADDITION:
+                printNode(node->children[0], 0);
+                printf(" + ");
+                printNode(node->children[1], 0);
+                // printOp(node, "+");
+                break;
+
+            case NODE_LOGICAL_OR:
+                printNode(node->children[0], 0);
+                printf(" | ");
+                printNode(node->children[1], 0);
+                break;
+            case NODE_LITERAL_INT:
+            case NODE_LITERAL_STRING:
+            case NODE_TOKEN_IDENTIFIER:
+            case NODE_LITERAL_CHAR:
+            case NODE_LITERAL_REAL:
+                printf("%s", node->hashNode->text);
+                break;
+            case NODE_LITERAL_FALSE:
+                printf("false");
+                break;
+            case NODE_LITERAL_TRUE:
+                printf("true");
+                break;
+            default:;
+                break;
+        }
     }
 }
-
-void printAST(ASTNode *root) { printTree(root, 0); }
 
 void printTree(ASTNode *root, int level) {
     if (!root) {
@@ -103,9 +148,6 @@ void printTree(ASTNode *root, int level) {
     }
 
     int toAdd = 0;
-    if (!isListType(root->astNodeType)) {
-        // printIndentation(level);
-    }
 
     printNode(root, level);
 
@@ -348,91 +390,6 @@ void printOperation(ASTNode *node, int level) {
     printf("");
 }
 
-int isOP(NodeType astNodeType) {
-    int s = 27;
-    NodeType lists[] = {
-        NODE_ASSIGNMENT,
-        NODE_PARAM,
-        NODE_KW_IF,
-        NODE_KW_IF_ELSE,
-        NODE_KW_WHILE,
-        NODE_VECTOR_INT,
-        NODE_VECTOR_TK,
-        NODE_VAR_DECLARATION,
-        NODE_KW_PRINT,
-        NODE_KW_PRINT_STRING,
-        NODE_VECTOR_DECLARATION,
-        NODE_VECTOR_DECLARATION_AND_ASIGN,
-        NODE_KW_RETURN,
-        NODE_FUNC_DECLARATION,
-        NODE_ADDITION,
-        NODE_SUBTRACTION,
-        NODE_MULTIPLICATION,
-        NODE_DIVISION,
-        NODE_LESS_THAN,
-        NODE_GREATER_THAN,
-        NODE_LOGICAL_OR,
-        NODE_LOGICAL_AND,
-        NODE_LESS_THAN_EQUAL,
-        NODE_GREATER_THAN_EQUAL,
-        NODE_EQUAL,
-        NODE_NOT_EQUAL,
-    };
-    for (int i = 0; i < s; i++) {
-        if (lists[i] == astNodeType)
-            return 1;
-    }
-    return 0;
-}
-
-int isKW(NodeType astNodeType) {
-    NodeType lists[] = {
-        NODE_KW_CHAR, NODE_KW_READ, NODE_KW_INT, NODE_KW_FLOAT, NODE_KW_BOOL,
-    };
-    int s = 5;
-    for (int i = 0; i < s; i++)
-        if (lists[i] == astNodeType)
-            return 1;
-    return 0;
-}
-
-int isListType(NodeType astNodeType) {
-    NodeType lists[] = {
-        NODE_DECLARATIONS_LIST, NODE_EMPTY,         NODE_PARAM_LIST,
-        NODE_VALUES_LIST,       NODE_COMMANDS_LIST, NODE_ARGS_LIST,
-    };
-    int s = 9;
-    for (int i = 0; i < s; i++)
-        if (lists[i] == astNodeType)
-            return 1;
-    return 0;
-}
-
-int isLitType(NodeType astNodeType) {
-    NodeType lists[] = {
-        NODE_EMPTY,         NODE_TOKEN_IDENTIFIER, NODE_LITERAL_INT,
-        NODE_LITERAL_CHAR,  NODE_LITERAL_REAL,     NODE_LITERAL_STRING,
-        NODE_LITERAL_FALSE, NODE_LITERAL_TRUE,
-
-    };
-    int s = 9;
-    for (int i = 0; i < s; i++)
-        if (lists[i] == astNodeType)
-            return 1;
-    return 0;
-}
-
-void printIndentation(int level) {
-    for (int i = 0; i < level; i++) {
-        printf("  ");
-    }
-}
-
-ASTNode **astNullChild() {
-    static ASTNode *nullArray[5] = {NULL, NULL, NULL, NULL, NULL};
-    return nullArray;
-}
-
 void printNodeOLD(ASTNode *node) {
     if (!node)
         return;
@@ -498,5 +455,56 @@ void printTreeOLD(ASTNode *root, int level) {
         if (root->children[i]) {
             printTreeOLD(root->children[i], level + 1);
         }
+    }
+}
+void printOp(ASTNode *node) {
+    if (node->astNodeType == NODE_PARENTHESIS_EXPRESSION) {
+        printf("(");
+        printNode(node->children[0], 0);
+        printf(")");
+    } else {
+        printNode(node->children[0], 0);
+        switch (node->astNodeType) {
+            default:
+                printf("Missed printOp value: %s\n",
+                       NodeTypeNames[node->astNodeType]);
+            case NODE_ADDITION:
+                printf(" + ");
+                break;
+            case NODE_SUBTRACTION:
+                printf(" - ");
+                break;
+            case NODE_MULTIPLICATION:
+                printf(" * ");
+                break;
+            case NODE_DIVISION:
+                printf(" / ");
+                break;
+            case NODE_LESS_THAN:
+                printf(" < ");
+                break;
+            case NODE_GREATER_THAN:
+                printf(" > ");
+                break;
+            case NODE_LOGICAL_OR:
+                printf(" | ");
+                break;
+            case NODE_LOGICAL_AND:
+                printf(" & ");
+                break;
+            case NODE_LESS_THAN_EQUAL:
+                printf(" <= ");
+                break;
+            case NODE_GREATER_THAN_EQUAL:
+                printf(" >= ");
+                break;
+            case NODE_EQUAL:
+                printf(" == ");
+                break;
+            case NODE_NOT_EQUAL:
+                printf(" != ");
+                break;
+        }
+        printNode(node->children[1], 0);
     }
 }

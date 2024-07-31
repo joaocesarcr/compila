@@ -5,6 +5,7 @@
 */
 
 #include "ast.h"
+#include "utils.h"
 #include "hash.h"
 
 #include <stdio.h>
@@ -41,27 +42,6 @@ extern void check_and_set_declarations(ASTNode *node);
 %token <token> OPERATOR_GE       
 %token <token> OPERATOR_EQ       
 %token <token> OPERATOR_DIF      
-%token <astnode> ','
-%token <astnode> ';'
-%token <astnode> ':'
-%token <astnode> '('
-%token <astnode> ')'
-%token <astnode> '['
-%token <astnode> ']'
-%token <astnode> '{'
-%token <astnode> '}'
-%token <astnode> '='
-%token <astnode> '+'
-%token <astnode> '-'
-%token <astnode> '*'
-%token <astnode> '/'
-%token <astnode> '%'
-%token <astnode> '<'
-%token <astnode> '>'
-%token <astnode> '&'
-%token <astnode> '|'
-%token <astnode> '~'
-%token <astnode> '.'
 
 %token <hash_node> TK_IDENTIFIER     
 %token <hash_node> LIT_INT           
@@ -84,7 +64,7 @@ extern void check_and_set_declarations(ASTNode *node);
 
 
 programa: lista_declaracoes { root = createNode(NODE_PROGRAM, (ASTNode*[]){$1, NULL}, NULL);
-        check_semantic(root);
+        checkSemantic(root);
         /*
         printTreeOLD(root,0);
         check_and_set_declarations(root);

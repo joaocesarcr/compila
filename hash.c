@@ -1,4 +1,5 @@
 #include "hash.h"
+#include "ast.h"
 #include <stdlib.h>
 #include <string.h>
 
@@ -50,5 +51,14 @@ void hashPrint() {
     for (i = 0; i < HASH_SIZE; i++) {
         for (node = Table[i]; node; node = node->next)
             printf("Table[%d] has %s\n", i, node->text);
+    }
+}
+void hashPrintNatures() {
+    int i;
+    HASH_NODE *node;
+    for (i = 0; i < HASH_SIZE; i++) {
+        for (node = Table[i]; node; node = node->next)
+            printf("Table[%d] has %s of nature %s\n", i, node->text,
+                   NodeTypeNames[node->nature]);
     }
 }

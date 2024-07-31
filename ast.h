@@ -83,6 +83,7 @@ int isLitType(NodeType astNodeType);
 int isOP(NodeType astNodeType);
 ASTNode **astNullChild();
 
+void printOp(ASTNode *node);
 void printNode(ASTNode *node, int level);
 void printTree(ASTNode *root, int level);
 void printOperation(ASTNode *node, int level);
@@ -91,6 +92,7 @@ void printIndentation(int level);
 
 void printNodeOLD(ASTNode *node);
 void printTreeOLD(ASTNode *root, int level);
+
 const char *NodeTypeNames[] = {
     "NODE_PROGRAM",
     "NODE_DECLARATIONS_LIST",

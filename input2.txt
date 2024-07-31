@@ -15,6 +15,7 @@ float f:2.5;		// 0.0 .0 0. are all allowed
 
 int main ()
   {
+  //i= (false | ((2 + 5) < 5));
   i = incn(b,b);
   undeclared = 2;
   number = 0;
@@ -45,8 +46,10 @@ int main ()
   print int d;
   print "\n";
 
-  if (a==15)
-    {
+  if (2+5) {
+    c = 1 + 1;
+  }
+  if (a==15) {
     a = a + 1;
     print "A era=15\n";
     }

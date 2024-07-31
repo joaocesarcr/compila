@@ -1,12 +1,11 @@
 //int i[2]:0 0 ;
-int i:0;
-bool b:true;
+//bool i:true;
 
 int main () {
-  b=incn(1,1);
+if (true) {
+  return false;
+  } else {
+  return true;
+  }
 
 } 
-int incn (int x, int n ) {
-  return x + n;
-}
-//  i[0] = incn(1,1);

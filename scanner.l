@@ -8,7 +8,9 @@ int yylex(void);
 int yyerror(char* s);
 #include "hash.h"
 #include "ast.h"
+#include "utils.h"
 #include "semantic.c"
+#include "utils.c"
 #include "y.tab.h"
 int running = 1;
 int lineNumber = 1;
