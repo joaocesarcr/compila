@@ -63,8 +63,16 @@ int lineNumber = 1;
 "read"                      { return KW_READ; }
 "print"                     { return KW_PRINT; }
 "return"                    { return KW_RETURN; }
-"true"                      { return LIT_TRUE; }
-"false"                     { return LIT_FALSE; }
+"true"                     { 
+                              HASH_NODE* entry = hashInsert(TK_IDENTIFIER, yytext);
+                              yylval.hash_node = entry;
+                              return LIT_TRUE;
+                            }
+"false"                     { 
+                              HASH_NODE* entry = hashInsert(TK_IDENTIFIER, yytext);
+                              yylval.hash_node = entry;
+                              return LIT_FALSE;
+                            }
 
 [a-zA-Z_][a-zA-Z0-9_]*      { 
                               HASH_NODE* entry = hashInsert(TK_IDENTIFIER, yytext);

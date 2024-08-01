@@ -207,7 +207,7 @@ controle_fluxo: KW_IF '(' expressao ')' comando controle_fluxo_if { $$ = createN
     ;
 
 controle_fluxo_if: { $$ = NULL;}
-    | KW_ELSE comando { $$ = $2; }
+    | KW_ELSE comando { $$ = createNode(NODE_ELSE,(ASTNode*[]){$2,NULL},NULL) ; }
     ;
 
 expressao: expressao '+' expressao { $$ = createNode(NODE_ADDITION, (ASTNode*[]){$1, $3, NULL}, NULL); }
@@ -228,8 +228,8 @@ expressao: expressao '+' expressao { $$ = createNode(NODE_ADDITION, (ASTNode*[])
          | LIT_INT { $$ = createNode(NODE_LITERAL_INT,     astNullChild(),  $1); }
          | LIT_CHAR { $$ = createNode(NODE_LITERAL_CHAR,   astNullChild(),  $1); }
          | LIT_REAL { $$ = createNode(NODE_LITERAL_REAL,   astNullChild(),  $1); }
-         | LIT_FALSE { $$ = createNode(NODE_LITERAL_FALSE, NULL,  NULL); }
-         | LIT_TRUE { $$ = createNode(NODE_LITERAL_TRUE,   NULL,  NULL); }
+         | LIT_FALSE { $$ = createNode(NODE_LITERAL_FALSE, astNullChild(),  $1); }
+         | LIT_TRUE { $$ = createNode(NODE_LITERAL_TRUE,   astNullChild(),  $1); }
          | chamada_funcao { $$ = $1; }
          ;
          ;

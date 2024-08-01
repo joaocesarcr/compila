@@ -4,6 +4,7 @@
 #include "semantic.h"
 #include <stdlib.h>
 
+TAC *makeIfThen(TAC *c0, TAC *c1);
 TAC *tacCreate(TacType type, HASH_NODE *res, HASH_NODE *op1, HASH_NODE *op2) {
     TAC *newtac = 0;
     newtac = (TAC *)calloc(1, sizeof(TAC));
@@ -19,7 +20,8 @@ TAC *tacCreate(TacType type, HASH_NODE *res, HASH_NODE *op1, HASH_NODE *op2) {
 void tacPrint(TAC *tac) {
     if (!tac)
         return;
-    // if (tac->tacType == TAC_SYMBOL) return;
+    if (tac->tacType == TAC_SYMBOL)
+        return;
     // printf("type%d", tac->tacType);
     fprintf(stderr, "TAC(");
     fprintf(stderr, "%s", TacTypeNames[tac->tacType]);
@@ -59,14 +61,22 @@ TAC *generateCode(ASTNode *node) {
         return NULL;
     for (i = 0; i < MAX_CHILDREN; i++)
         code[i] = generateCode(node->children[i]);
-
     switch (node->astNodeType) {
         default:
             result =
                 tacJoin(tacJoin(tacJoin(code[0], code[1]), code[2]), code[3]);
             break;
-
+        case NODE_IF_CONTROL:
+            if (!node->children[2])
+                result = makeIfThen(code[0], code[1]);
+            else
+                result = makeIfThenElse(code[0], code[1], code[2]);
+            break;
         case NODE_LITERAL_INT:
+        case NODE_LITERAL_REAL:
+        case NODE_LITERAL_CHAR:
+        case NODE_LITERAL_TRUE:
+        case NODE_LITERAL_FALSE:
         case NODE_TOKEN_IDENTIFIER:
             result = tacCreate(TAC_SYMBOL, node->hashNode, 0, 0);
             break;
@@ -120,9 +130,56 @@ TAC *tacGenOp(TacType OP, TAC *c0, TAC *c1) {
     return tacJoin(tacJoin(c0, c1), tacCreate(OP, makeTemp(), c0 ? c0->res : 0,
                                               c1 ? c1->res : 0));
 }
+
+TAC *makeIfThen(TAC *c0, TAC *c1) {
+    // c0: expression to be evaluated
+    // c1: block
+    TAC *jumptac = 0;
+    TAC *labeltac = 0;
+    HASH_NODE *newlabel = 0;
+    newlabel = makeLabel();
+    jumptac = tacCreate(TAC_JUMP_FALSE, newlabel, c0->res ? c0->res : 0, 0);
+    jumptac->prev = c0;
+    labeltac = tacCreate(TAC_LABEL, newlabel, 0, 0);
+    labeltac->prev = c1;
+    return tacJoin(jumptac, labeltac);
+}
+TAC *makeIfThenElse(TAC *c0, TAC *c1, TAC *c2) {
+    // c0: expression to be evaluated
+    // c1: true block
+    // c2: block
+
+    TAC *jumptac = 0;
+    TAC *jumpElseEND = 0;
+    TAC *labeltac = 0;
+    TAC *elseENDtac = 0;
+
+    HASH_NODE *newlabel = 0;
+    HASH_NODE *elseEND = 0;
+
+    newlabel = makeLabel();
+    elseEND = makeLabel();
+
+    jumptac = tacCreate(TAC_JUMP_FALSE, newlabel, c0->res ? c0->res : 0, 0);
+    labeltac = tacCreate(TAC_LABEL, newlabel, 0, 0);
+    elseENDtac = tacCreate(TAC_LABEL, elseEND, 0, 0);
+    jumpElseEND = tacCreate(TAC_JMP, elseEND, 0, 0);
+
+    jumptac->prev = c0;
+    jumpElseEND->prev = c1;
+    labeltac->prev = jumpElseEND;
+    elseENDtac->prev = c2;
+
+    return tacJoin(tacJoin(tacJoin(jumptac, labeltac), elseENDtac), 0);
+}
 /*
- *result = tacJoin(tacJoin(code[0], code[1]),
-                             tacCreate(TAC_ADD, makeTemp(),
-                                       code[0] ? code[0]->res : 0,
-                                       code[1] ? code[1]->res : 0));
+ TAC(TAC_JUMP_FALSE,ifFalseHere,true,0);
+TAC(TAC_ADD,lIlIlIlIlTemp_0,b,b);
+TAC(TAC_COPY,b,lIlIlIlIlTemp_0,0);
+TAC(TAC_JMP,elseEND,0,0)
+
+TAC(TAC_LABEL,ifFalseHere,0,0);
+TAC(TAC_ADD,lIlIlIlIlTemp_1,a,a);
+TAC(TAC_COPY,a,lIlIlIlIlTemp_1,0)
+TAC(TAC_LABEL,elseEND,0,0);
 */

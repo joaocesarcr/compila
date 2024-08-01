@@ -67,5 +67,11 @@ HASH_NODE *makeTemp(void) {
     static int serial = 0;
     char buffer[256] = "";
     sprintf(buffer, "lIlIlIlIlTemp_%d", serial++);
-    return hashInsert(NODE_VAR, buffer);
+    return hashInsert(SYMBOL_VAR, buffer);
+}
+HASH_NODE *makeLabel(void) {
+    static int serial = 0;
+    char buffer[256] = "";
+    sprintf(buffer, "lLLlLIabel_%d", serial++);
+    return hashInsert(SYMBOL_LABEL, buffer);
 }

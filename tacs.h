@@ -4,6 +4,12 @@
 #include "ast.h"
 #include "hash.h"
 typedef enum {
+    TAC_JMP,
+    TAC_TRUE,
+    TAC_FALSE,
+    TAC_JUMP_ELSE,
+    TAC_JUMP_FALSE,
+    TAC_LABEL,
     TAC_SYMBOL,
     TAC_ADD,
     TAC_SUB,
@@ -17,11 +23,16 @@ typedef enum {
     TAC_GREATER_THAN_EQUAL,
     TAC_EQUAL,
     TAC_NOT_EQUAL,
-
     TAC_COPY,
 } TacType;
 
 const char *TacTypeNames[] = {
+    "TAC_JMP",
+    "TAC_TRUE",
+    "TAC_FALSE",
+    "TAC_JUMP_ELSE",
+    "TAC_JUMP_FALSE",
+    "TAC_LABEL",
     "TAC_SYMBOL",
     "TAC_ADD",
     "TAC_SUB",
@@ -35,7 +46,6 @@ const char *TacTypeNames[] = {
     "TAC_GREATER_THAN_EQUAL",
     "TAC_EQUAL",
     "TAC_NOT_EQUAL",
-
     "TAC_COPY",
 };
 
@@ -56,4 +66,5 @@ void tacPrintBackwards(TAC *tac);
 // CODE GEN
 TAC *generateCode(ASTNode *node);
 TAC *tacGenOp(TacType OP, TAC *c1, TAC *c2);
+TAC *makeIfThenElse(TAC *c0, TAC *c1, TAC *c2);
 #endif
