@@ -8,7 +8,7 @@ typedef enum {
     TAC_TRUE,
     TAC_FALSE,
     TAC_JUMP_ELSE,
-    TAC_JUMP_FALSE,
+    TAC_JUMP_ZERO,
     TAC_LABEL,
     TAC_SYMBOL,
     TAC_ADD,
@@ -31,7 +31,7 @@ const char *TacTypeNames[] = {
     "TAC_TRUE",
     "TAC_FALSE",
     "TAC_JUMP_ELSE",
-    "TAC_JUMP_FALSE",
+    "TAC_JUMP_ZERO",
     "TAC_LABEL",
     "TAC_SYMBOL",
     "TAC_ADD",
@@ -67,4 +67,5 @@ void tacPrintBackwards(TAC *tac);
 TAC *generateCode(ASTNode *node);
 TAC *tacGenOp(TacType OP, TAC *c1, TAC *c2);
 TAC *makeIfThenElse(TAC *c0, TAC *c1, TAC *c2);
+TAC *makeWhile(TAC *c0, TAC *c1);
 #endif

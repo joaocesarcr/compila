@@ -72,6 +72,9 @@ TAC *generateCode(ASTNode *node) {
             else
                 result = makeIfThenElse(code[0], code[1], code[2]);
             break;
+        case NODE_KW_WHILE:
+            makeWhile(code[0], code[1]);
+            break;
         case NODE_LITERAL_INT:
         case NODE_LITERAL_REAL:
         case NODE_LITERAL_CHAR:
@@ -136,11 +139,12 @@ TAC *makeIfThen(TAC *c0, TAC *c1) {
     // c1: block
     TAC *jumptac = 0;
     TAC *labeltac = 0;
-    HASH_NODE *newlabel = 0;
-    newlabel = makeLabel();
-    jumptac = tacCreate(TAC_JUMP_FALSE, newlabel, c0->res ? c0->res : 0, 0);
-    jumptac->prev = c0;
+
+    HASH_NODE *newlabel = makeLabel();
+    jumptac = tacCreate(TAC_JUMP_ZERO, newlabel, c0->res ? c0->res : 0, 0);
     labeltac = tacCreate(TAC_LABEL, newlabel, 0, 0);
+
+    jumptac->prev = c0;
     labeltac->prev = c1;
     return tacJoin(jumptac, labeltac);
 }
@@ -160,7 +164,7 @@ TAC *makeIfThenElse(TAC *c0, TAC *c1, TAC *c2) {
     newlabel = makeLabel();
     elseEND = makeLabel();
 
-    jumptac = tacCreate(TAC_JUMP_FALSE, newlabel, c0->res ? c0->res : 0, 0);
+    jumptac = tacCreate(TAC_JUMP_ZERO, newlabel, c0->res ? c0->res : 0, 0);
     labeltac = tacCreate(TAC_LABEL, newlabel, 0, 0);
     elseENDtac = tacCreate(TAC_LABEL, elseEND, 0, 0);
     jumpElseEND = tacCreate(TAC_JMP, elseEND, 0, 0);
@@ -172,14 +176,40 @@ TAC *makeIfThenElse(TAC *c0, TAC *c1, TAC *c2) {
 
     return tacJoin(tacJoin(tacJoin(jumptac, labeltac), elseENDtac), 0);
 }
-/*
- TAC(TAC_JUMP_FALSE,ifFalseHere,true,0);
-TAC(TAC_ADD,lIlIlIlIlTemp_0,b,b);
-TAC(TAC_COPY,b,lIlIlIlIlTemp_0,0);
-TAC(TAC_JMP,elseEND,0,0)
 
-TAC(TAC_LABEL,ifFalseHere,0,0);
-TAC(TAC_ADD,lIlIlIlIlTemp_1,a,a);
-TAC(TAC_COPY,a,lIlIlIlIlTemp_1,0)
-TAC(TAC_LABEL,elseEND,0,0);
+TAC *makeWhile(TAC *c0, TAC *c1) {
+    // c0: expression to be evaluated
+    // c1: block
+    TAC *jumpToWhileEnd = 0;
+    TAC *jumpToWhileTest = 0;
+    TAC *tacLabelWhileStart = 0;
+    TAC *tacLabelWhileEnd = 0;
+
+    HASH_NODE *whileStart = makeLabel();
+    HASH_NODE *whileEnd = makeLabel();
+
+    tacLabelWhileStart = tacCreate(TAC_LABEL, whileStart, 0, 0);
+    tacLabelWhileEnd = tacCreate(TAC_LABEL, whileEnd, 0, 0);
+
+    jumpToWhileEnd =
+        tacCreate(TAC_JUMP_ZERO, whileEnd, c0->res ? c0->res : 0, 0);
+    jumpToWhileTest = tacCreate(TAC_JMP, whileStart, 0, 0);
+
+    c0->prev = tacLabelWhileStart;
+    jumpToWhileEnd->prev = c0;
+    jumpToWhileTest->prev = c1;
+    tacLabelWhileEnd->prev = jumpToWhileTest;
+    return tacJoin(tacJoin(tacLabelWhileStart, jumpToWhileEnd),
+                   jumpToWhileTest);
+}
+
+/*
+TAC(TAC_LABEL,whileStart,0,0);
+TAC(TAC_JUMP_ZERO,ifFalseHere,true,0); c0
+
+TAC(TAC_ADD,lIlIlIlIlTemp_0,b,b); c1
+TAC(TAC_COPY,b,lIlIlIlIlTemp_0,0);
+
+TAC(TAC_JMP,whileStart,0,0)
+TAC(TAC_LABEL,whileEnd,0,0);
 */
