@@ -65,6 +65,7 @@ typedef enum {
     NODE_KW_WHILE,
     NODE_EMPTY,
     NODE_PARENTHESIS_EXPRESSION,
+    NODE_VAR,
 } NodeType;
 
 typedef struct ASTNode_s {
@@ -154,5 +155,6 @@ const char *NodeTypeNames[] = {
     "NODE_KW_WHILE",
     "NODE_EMPTY",
     "NODE_PARENTHESIS_EXPRESSION",
+    "NODE_VAR",
 };
 #endif

@@ -49,7 +49,6 @@ NodeType getExpressionType(ASTNode *node) {
         }
         if (!(isCompatible(l, r)) && (l && r)) {
             printIncompatibility(node, l, r);
-
             SemanticErrors++;
             return 0;
         } else

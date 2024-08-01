@@ -1,5 +1,5 @@
 %{
-/* Compiladores 2024/01 - Etapa 3
+/* Compiladores 2024/01 - Etapa 5
  * João César de Paula Criscolo  - 00304342
  * Prof. Marcelo Johann
 */
@@ -7,6 +7,7 @@
 #include "ast.h"
 #include "utils.h"
 #include "hash.h"
+#include "tacs.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -65,6 +66,8 @@ extern void check_and_set_declarations(ASTNode *node);
 
 programa: lista_declaracoes { root = createNode(NODE_PROGRAM, (ASTNode*[]){$1, NULL}, NULL);
         checkSemantic(root);
+        tacPrintBackwards(generateCode(root));
+        hashPrint();
         /*
         printTreeOLD(root,0);
         check_and_set_declarations(root);

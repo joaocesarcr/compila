@@ -17,4 +17,5 @@ HASH_NODE *hashFind(char *text);
 HASH_NODE *hashInsert(int hashNodeType, char *text);
 void hashPrint(void);
 void hashPrintNatures();
+HASH_NODE *makeTemp(void);
 #endif

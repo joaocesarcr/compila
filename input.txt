@@ -1,11 +1,7 @@
-//int i[2]:0 0 ;
-//bool i:true;
+int a:1;
+int b:2;
+int x:0;
 
-int main () {
-if (true) {
-  return false;
-  } else {
-  return true;
-  }
-
-} 
+int main() {
+x = a / (b + 5) + 2 + 1;
+}

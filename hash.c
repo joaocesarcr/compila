@@ -62,3 +62,10 @@ void hashPrintNatures() {
                    NodeTypeNames[node->nature]);
     }
 }
+
+HASH_NODE *makeTemp(void) {
+    static int serial = 0;
+    char buffer[256] = "";
+    sprintf(buffer, "lIlIlIlIlTemp_%d", serial++);
+    return hashInsert(NODE_VAR, buffer);
+}

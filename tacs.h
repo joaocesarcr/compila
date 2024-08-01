@@ -1,0 +1,59 @@
+#ifndef TACS_HEADER
+#define TACS_HEADER
+
+#include "ast.h"
+#include "hash.h"
+typedef enum {
+    TAC_SYMBOL,
+    TAC_ADD,
+    TAC_SUB,
+    TAC_MULTIPLY,
+    TAC_DIVIDE,
+    TAC_LESS_THAN,
+    TAC_GREATER_THAN,
+    TAC_LOGICAL_OR,
+    TAC_LOGICAL_AND,
+    TAC_LESS_THAN_EQUAL,
+    TAC_GREATER_THAN_EQUAL,
+    TAC_EQUAL,
+    TAC_NOT_EQUAL,
+
+    TAC_COPY,
+} TacType;
+
+const char *TacTypeNames[] = {
+    "TAC_SYMBOL",
+    "TAC_ADD",
+    "TAC_SUB",
+    "TAC_MULTIPLY",
+    "TAC_DIVIDE",
+    "TAC_LESS_THAN",
+    "TAC_GREATER_THAN",
+    "TAC_LOGICAL_OR",
+    "TAC_LOGICAL_AND",
+    "TAC_LESS_THAN_EQUAL",
+    "TAC_GREATER_THAN_EQUAL",
+    "TAC_EQUAL",
+    "TAC_NOT_EQUAL",
+
+    "TAC_COPY",
+};
+
+typedef struct sTac_node {
+    TacType tacType;
+    struct sTac_node *prev;
+    struct sTac_node *next;
+    HASH_NODE *res;
+    HASH_NODE *op1;
+    HASH_NODE *op2;
+} TAC;
+
+TAC *tacCreate(TacType type, HASH_NODE *res, HASH_NODE *op1, HASH_NODE *op2);
+
+void tacPrint(TAC *tac);
+void tacPrintBackwards(TAC *tac);
+
+// CODE GEN
+TAC *generateCode(ASTNode *node);
+TAC *tacGenOp(TacType OP, TAC *c1, TAC *c2);
+#endif
