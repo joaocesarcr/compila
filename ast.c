@@ -55,7 +55,9 @@ void printNode(ASTNode *node, int level) {
 
         switch (node->astNodeType) {
             case NODE_FUNC_CALL:
-                printf("%s(...)", node->children[0]->hashNode->text);
+                printf("%s(", node->children[0]->hashNode->text);
+		printNode(node->children[1],0);
+                printf(")", node->children[0]->hashNode->text);
                 break;
             case NODE_FUNC_CALL_EMPTY:
                 printf("%s()", node->children[0]->hashNode->text);

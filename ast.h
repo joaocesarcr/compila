@@ -78,7 +78,6 @@ typedef struct ASTNode_s {
 
 ASTNode *createNode(NodeType type, ASTNode *children[MAX_CHILDREN],
                     HASH_NODE *hashNode);
-void printTree();
 int isListType(NodeType astNodeType);
 int isKW(NodeType astNodeType);
 int isLitType(NodeType astNodeType);

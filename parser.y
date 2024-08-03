@@ -65,9 +65,10 @@ extern void check_and_set_declarations(ASTNode *node);
 
 
 programa: lista_declaracoes { root = createNode(NODE_PROGRAM, (ASTNode*[]){$1, NULL}, NULL);
+//	printAST(root);
         checkSemantic(root);
-        tacPrintBackwards(generateCode(root));
-        hashPrint();
+        //tacPrintBackwards(generateCode(root));
+        //hashPrint();
         /*
         printTreeOLD(root,0);
         check_and_set_declarations(root);
@@ -254,7 +255,7 @@ chamada_funcao: TK_IDENTIFIER '(' lista_chamada ')' { $$ = createNode(NODE_FUNC_
               | TK_IDENTIFIER '(' ')'{ $$ = createNode(NODE_FUNC_CALL_EMPTY, (ASTNode*[]){createNode(NODE_TOKEN_IDENTIFIER, astNullChild(),$1), NULL, NULL}, NULL); }
 
 %% 
-int yyerror() {
+int yyerror(char* s) {
   fprintf(stderr,"Syntax error in line %d\n", getLineNumber());
   exit(3);
   return 1;

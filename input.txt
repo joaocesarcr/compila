@@ -2,9 +2,9 @@ int a:1;
 int b:2;
 
 int main() {
-  if (true) {
+  while (true) {
      b = b + b;
-  } else {
+  } 
     a = a +a;
-  }
+  
 }

@@ -1,0 +1,18 @@
+int i:2.5;
+int i2:1.0;
+int iv[3]: 1 1 1.1;
+int main ()
+  {
+  i2 = i + 2;
+	i2 = 2 + 5;
+	i2 = i + i;
+	i = test();
+	i2=fparam(i);
+}
+
+int test() {
+}
+
+int fparam(int x) {
+	return x;
+}

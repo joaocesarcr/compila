@@ -1,0 +1,19 @@
+int v[10]: 'a' 0'b'0 0 0 0 0 0 0;
+int v2[10]: 'a'0 0 true 0'b'0 0 0 0 0 0 0;
+bool b: false;
+int d:5;
+
+int main ()
+  {
+  v[b] = 10;
+  v[d] = 55;
+  print int v[5];
+  v[d] = incn(d,d);
+}
+
+int incn(int x, int y) {
+	return x+y;
+}
+
+// end of file
+  

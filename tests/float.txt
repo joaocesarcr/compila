@@ -1,0 +1,17 @@
+float f:2.5;
+float f2:1.0;
+float fv[3]:1.0 1.0 0.1;
+int main ()
+  {
+  f2 = f + f;
+	f2 = 2.5 + 0.5;
+	f = test();
+	f2=fparam(f);
+}
+
+float test() {
+}
+
+float fparam(float x) {
+	return x;
+}
