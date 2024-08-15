@@ -68,8 +68,8 @@ programa: lista_declaracoes { root = createNode(NODE_PROGRAM, (ASTNode*[]){$1, N
         //printTreeOLD(root,0);
         //printAST(root); // Etapa 3
         checkSemantic(root);
-        //tacPrintBackwards(generateCode(root));
-        //hashPrint();
+        tacPrintBackwards(generateCode(root));
+        hashPrint();
         /*
         printTreeOLD(root,0);
         check_and_set_declarations(root);

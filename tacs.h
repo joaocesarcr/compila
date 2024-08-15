@@ -24,6 +24,7 @@ typedef enum {
     TAC_EQUAL,
     TAC_NOT_EQUAL,
     TAC_COPY,
+    TAC_PRINT,
 } TacType;
 
 const char *TacTypeNames[] = {
@@ -47,6 +48,7 @@ const char *TacTypeNames[] = {
     "TAC_EQUAL",
     "TAC_NOT_EQUAL",
     "TAC_COPY",
+    "TAC_PRINT",
 };
 
 typedef struct sTac_node {
