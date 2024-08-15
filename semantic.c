@@ -26,7 +26,6 @@ typedef enum {
 } SEMANTIC_NATURE;
 
 void checkSemantic(ASTNode *root) {
-    printTreeOLD(root, 0);
     check_and_set_declarations(root);
     // hashPrintNatures();
     check_undeclared_variables(root);
@@ -35,24 +34,35 @@ void checkSemantic(ASTNode *root) {
     if (SemanticErrors) {
         printf("Total of %d semantic errors\n", SemanticErrors);
         exit(4);
+    } else {
+        printf("No semantic errors found.\n");
     }
 }
 
 NodeType getExpressionType(ASTNode *node) {
+    int printDebug = 0;
     NodeType l = NODE_EMPTY, r = NODE_EMPTY;
+    if (1 && printDebug)
+        printf("getExpressionType called with node %s\n",
+               NodeTypeNames[node->astNodeType]);
     if (isExpression(node)) {
         if (node->astNodeType == NODE_PARENTHESIS_EXPRESSION)
             return getType(node->children[0]);
         else {
             l = getType(node->children[0]);
             r = getType(node->children[1]);
+
+            if (printDebug && 1) {
+                printf("l: %s\nr: %s\n", NodeTypeNames[l], NodeTypeNames[r]);
+            }
         }
         if (!(isCompatible(l, r)) && (l && r)) {
             printIncompatibility(node, l, r);
             SemanticErrors++;
             return 0;
-        } else
-            return checkOpType(node, l);
+        } else if (printDebug)
+            printf("GOT HERE!!\n");
+        return checkOpType(node, l);
     }
     printf("Tried get expression but got empty node\n");
     return 0;
@@ -96,16 +106,22 @@ void printIncompatibility(ASTNode *node, NodeType l, NodeType r) {
 }
 
 NodeType checkOpType(ASTNode *node, NodeType type) {
+    int printDebug = 0;
+    if (printDebug)
+        printf("checkOpType called !\n");
+    NodeType returnType = NODE_EMPTY;
     // Given an op where the expressions are compatible, returns the op type
     if (node->astNodeType == NODE_PARENTHESIS_EXPRESSION)
-        return type;
-    if (isCompatible(node->astNodeType, type)) {
+        returnType = type;
+    else if (isCompatible(node->astNodeType, type)) {
+
         switch (node->astNodeType) {
             case NODE_ADDITION:
             case NODE_SUBTRACTION:
             case NODE_MULTIPLICATION:
             case NODE_DIVISION:
-                return type;
+                returnType = type;
+                break;
 
             case NODE_LESS_THAN:
             case NODE_GREATER_THAN:
@@ -115,18 +131,25 @@ NodeType checkOpType(ASTNode *node, NodeType type) {
             case NODE_GREATER_THAN_EQUAL:
             case NODE_EQUAL:
             case NODE_NOT_EQUAL:
-                return NODE_KW_BOOL;
+                returnType = NODE_KW_BOOL;
+                break;
             default:
-                printf("Default called in checkOpType with node of type %s and "
+                printf("Default called in checkOpType with node of type %s "
+                       "and "
                        "type %s\n",
                        NodeTypeNames[node->astNodeType], NodeTypeNames[type]);
         }
+
     } else {
+        printf("checkOpType semantic error\n");
         SemanticErrors++;
-        printf("Default called in checkOpType with node of type %s and "
-               "type %s\n",
-               NodeTypeNames[node->astNodeType], NodeTypeNames[type]);
     }
+    if (printDebug) {
+        printf("Got expression %s and node of type %s. Returning type %s\n",
+               NodeTypeNames[node->astNodeType], NodeTypeNames[type],
+               NodeTypeNames[returnType]);
+    }
+    return returnType;
 }
 
 void checkExpressions(ASTNode *node) {
@@ -313,65 +336,35 @@ int checkVectorTypes(ASTNode *node, NodeType type, int index,
     // type: tipo esperado
     // index: posicao atual no vetor\
     // declaration: endereco do tkid na tabela hash
-    int printDebug = 1;
+    int printDebug = 0;
+    int error = 0;
     if (node == NULL) {
         if (printDebug)
             printf("checkListTyp NULL node\n");
         return 1;
     }
 
-    if (node->children[1]) { // Se nao final da lista, compara e chama
-        int nodeType = getType(node->children[0]);
-        if (node->children[0]->astNodeType == NODE_TOKEN_IDENTIFIER) {
-            nodeType = node->children[0]->hashNode->nature;
-            if (printDebug)
-                printf("checking type for %s[%d]. comparing %s of type %s "
-                       "with "
-                       "expected %s \n",
-                       declaration->text, index,
-                       node->children[0]->hashNode->text,
-                       NodeTypeNames[nodeType], NodeTypeNames[type]);
-
-        } else {
-            nodeType = node->children[0]->astNodeType;
-            if (printDebug)
-                printf("checking type for %s[%d]. comparing type %s with "
-                       "expected %s \n",
-                       declaration->text, index, NodeTypeNames[nodeType],
-                       NodeTypeNames[type]);
-        }
-
-        if (isCompatible(nodeType, type)) {
-            if (printDebug)
-                printf("  %s is compatible with %s\n", NodeTypeNames[nodeType],
-                       NodeTypeNames[type]);
-
-            return checkVectorTypes(node->children[1], type, index + 1,
-                                    declaration);
-        } else {
-            printf("SEMANTIC ERROR: %s[%d] expected to be %s, but "
-                   "got %s instead\n",
-                   declaration->text, index, NodeTypeNames[type],
-                   NodeTypeNames[node->children[0]->astNodeType]);
-            SemanticErrors++;
-            return 0;
-        }
-    } else { // Se final de lista, compara 0
-        // return (isCompatible(node->children[0]->hashNode->nature, type));
-        if (isCompatible(node->children[0]->hashNode->nature, type)) {
+    if (!node->children[0]) {
+        printf("Non null node without children[0]");
+        return 0;
+    }
+    int nodeT = getType(node->children[0]);
+    if (isCompatible(nodeT, type)) {
+        if (!node->children[1]) { // Fim da lista
             return 1;
         } else {
-            if (node->children[0] && 0) {
-                printf("SEMANTIC ERROR: %s[%d] expected to be "
-                       "%s, but "
-                       "got %s instead\n",
-                       declaration->text, index, NodeTypeNames[type],
-                       NodeTypeNames[node->children[0]->astNodeType]);
-
-                SemanticErrors++;
-                return 0;
-            }
+            return checkVectorTypes(node->children[1], type, index + 1,
+                                    declaration);
         }
+    } else {
+        printf("SEMANTIC ERROR: %s[%d] (%s) expected to be "
+               "%s, but "
+               "got %s instead\n",
+               declaration->text, index,
+               isLitType(nodeT) ? node->hashNode->text : NodeTypeNames[nodeT],
+               NodeTypeNames[type],
+               NodeTypeNames[node->children[0]->astNodeType]);
+        return 0;
     }
 }
 
@@ -387,9 +380,9 @@ void checkNodes(ASTNode *node, ASTNode *root) {
             printf("SEMANTIC ERROR: ");
             printNode(node, 0);
             printf("\n  ");
-            printf(
-                "If expected expression of type bool, but found %s instead \n",
-                NodeTypeNames[c]);
+            printf("If expected expression of type bool, but found %s "
+                   "instead \n",
+                   NodeTypeNames[c]);
         }
     }
     if ((node->astNodeType == NODE_FUNC_DECLARATION) ||
@@ -649,7 +642,8 @@ void printOpError(ASTNode *node) {
             printf(" error. Invalid operands for : ");
             printf("%s, %s\n", NodeTypeNames[getType(node->children[0])],
                    NodeTypeNames[getType(node->children[1])]);
-            // printIdentifiersTypeNature(node->children[0], node->children[1]);
+            // printIdentifiersTypeNature(node->children[0],
+            // node->children[1]);
             SemanticErrors++;
         }
     }
@@ -671,7 +665,11 @@ int isCompatible(NodeType fType, NodeType sType) {
     //     return 1;
     // }
     int vReturn = 0;
-    int printDebug = 1;
+    int printDebug = 0;
+    if (printDebug)
+        printf("isCompatible called with types %s and %s.",
+               NodeTypeNames[fType], NodeTypeNames[sType]);
+
     if (fType == NODE_LITERAL_CHAR) {
         fType = NODE_KW_CHAR;
     }
@@ -694,14 +692,12 @@ int isCompatible(NodeType fType, NodeType sType) {
     if (fType == sType) {
         vReturn = 1;
     } else {
-        if (printDebug)
-            printf("isCompatible called with types %s and %s.",
-                   NodeTypeNames[fType], NodeTypeNames[sType]);
 
         switch (fType) {
             default:
                 if (printDebug)
-                    printf("isCompatible default called with types %s and %s\n",
+                    printf("isCompatible default called with types %s and "
+                           "%s\n",
                            NodeTypeNames[fType], NodeTypeNames[sType]);
                 return 0;
                 break;
@@ -754,6 +750,7 @@ int isCompatible(NodeType fType, NodeType sType) {
                         break;
                 }
 
+                break;
             case NODE_LITERAL_TRUE:
             case NODE_LITERAL_FALSE:
             case NODE_KW_BOOL:
@@ -796,9 +793,13 @@ int isCompatible(NodeType fType, NodeType sType) {
         }
         if (printDebug)
             printf("Returning %d, %s\n", vReturn, vReturn ? "true" : "false");
+        return vReturn;
     }
 }
 NodeType getType(ASTNode *node) {
+    int printDebug = 0;
+    if (printDebug)
+        printf("getType: %s\n", NodeTypeNames[node->astNodeType]);
     if (isLitType(node->astNodeType)) {
         // printf("Chegou aqui com node %s\n",
         // NodeTypeNames[node->astNodeType]);
@@ -810,6 +811,8 @@ NodeType getType(ASTNode *node) {
     } else if (isExpression(node))
         return getExpressionType(node);
 
+    if (printDebug)
+        printf("INSIDE SWITCH\n");
     switch (node->astNodeType) {
         default:
             printf("getType defaulted with type %s\n",
@@ -848,7 +851,7 @@ NodeType getType(ASTNode *node) {
         case NODE_TOKEN_IDENTIFIER:
             return node->hashNode->nature;
         case NODE_PARENTHESIS_EXPRESSION:
-            printf("chegou aqui! children = ");
+            printf("chegou aqui! children = dhaskjdhsajkdhsajkhdsajk\n\n\n ");
             printNode(node->children[0], 0);
             printf("\n");
             return getType(node->children[0]);

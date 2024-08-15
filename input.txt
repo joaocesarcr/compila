@@ -1,1 +1,5 @@
-int v2[10]: 'a'0 0 true 0'b'0 0 0 0;
+bool b:true;
+int main () {
+  b= (false | ((2 + 5) < 5));
+}
+  //b= (false | ((2 + 5) < 5));

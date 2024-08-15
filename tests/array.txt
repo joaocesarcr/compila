@@ -15,5 +15,9 @@ int incn(int x, int y) {
 	return x+y;
 }
 
+int test(int a, int z) {
+return a;
+}
+
 // end of file
   

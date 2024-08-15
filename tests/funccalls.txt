@@ -1,0 +1,24 @@
+char c:'A';
+bool b:true;
+int i:15;
+int v[10]: 'a' 0'b'0 0 0 0 0 0 0;
+float f:2.5;		// 0.0 .0 0. are all allowed
+
+int main ()
+  {
+  }
+
+int incn (int i1, int i2) {
+  return i1 + i2;
+}
+
+float incnf (float f1, float f2) {
+  return f1 + f2;
+}
+bool equals (bool b1, bool b2) {
+  return b1 == b2;
+}
+
+
+
+// end of file
