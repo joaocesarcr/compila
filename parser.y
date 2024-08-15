@@ -65,7 +65,8 @@ extern void check_and_set_declarations(ASTNode *node);
 
 
 programa: lista_declaracoes { root = createNode(NODE_PROGRAM, (ASTNode*[]){$1, NULL}, NULL);
-//	printAST(root);
+        printTreeOLD(root,0);
+        //printAST(root); // Etapa 3
         checkSemantic(root);
         //tacPrintBackwards(generateCode(root));
         //hashPrint();

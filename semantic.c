@@ -121,12 +121,12 @@ NodeType checkOpType(ASTNode *node, NodeType type) {
                        "type %s\n",
                        NodeTypeNames[node->astNodeType], NodeTypeNames[type]);
         }
-	} else {
-					SemanticErrors++;
-				printf("Default called in checkOpType with node of type %s and "
-							 "type %s\n",
-							 NodeTypeNames[node->astNodeType], NodeTypeNames[type]);
-	}
+    } else {
+        SemanticErrors++;
+        printf("Default called in checkOpType with node of type %s and "
+               "type %s\n",
+               NodeTypeNames[node->astNodeType], NodeTypeNames[type]);
+    }
 }
 
 void checkExpressions(ASTNode *node) {
@@ -313,7 +313,7 @@ int checkVectorTypes(ASTNode *node, NodeType type, int index,
     // type: tipo esperado
     // index: posicao atual no vetor\
     // declaration: endereco do tkid na tabela hash
-    int printDebug = 0;
+    int printDebug = 1;
     if (node == NULL) {
         if (printDebug)
             printf("checkListTyp NULL node\n");
@@ -321,7 +321,7 @@ int checkVectorTypes(ASTNode *node, NodeType type, int index,
     }
 
     if (node->children[1]) { // Se nao final da lista, compara e chama
-        int nodeType;
+        int nodeType = getType(node->children[0]);
         if (node->children[0]->astNodeType == NODE_TOKEN_IDENTIFIER) {
             nodeType = node->children[0]->hashNode->nature;
             if (printDebug)
@@ -357,7 +357,7 @@ int checkVectorTypes(ASTNode *node, NodeType type, int index,
             return 0;
         }
     } else { // Se final de lista, compara 0
-        //return (isCompatible(node->children[0]->hashNode->nature, type));
+        // return (isCompatible(node->children[0]->hashNode->nature, type));
         if (isCompatible(node->children[0]->hashNode->nature, type)) {
             return 1;
         } else {
@@ -471,8 +471,8 @@ void checkNodes(ASTNode *node, ASTNode *root) {
                                "only be "
                                "used with indexes\n",
                                child->hashNode->text);
-                    SemanticErrors++;
-		    }
+                        SemanticErrors++;
+                    }
                 }
 
                 // Check if function is called with parameters
@@ -667,109 +667,136 @@ void printIdentifiersTypeNature(ASTNode *node, ASTNode *otherNode) {
            NodeTypeNames[otherNode->hashNode->nature]);
 }
 int isCompatible(NodeType fType, NodeType sType) {
-    //if (isNumberType(fType) && isNumberType(sType)) {
-    //    return 1;
-    //}
-		int vReturn = 0;
+    // if (isNumberType(fType) && isNumberType(sType)) {
+    //     return 1;
+    // }
+    int vReturn = 0;
     int printDebug = 1;
+    if (fType == NODE_LITERAL_CHAR) {
+        fType = NODE_KW_CHAR;
+    }
+    if (fType == NODE_LITERAL_INT) {
+        fType = NODE_KW_INT;
+    }
+    if (fType == NODE_LITERAL_REAL) {
+        fType = NODE_KW_FLOAT;
+    }
+    if (sType == NODE_LITERAL_CHAR) {
+        sType = NODE_KW_CHAR;
+    }
+    if (sType == NODE_LITERAL_INT) {
+        sType = NODE_KW_INT;
+    }
+    if (sType == NODE_LITERAL_REAL) {
+        sType = NODE_KW_FLOAT;
+    }
+
     if (fType == sType) {
         vReturn = 1;
     } else {
-		if (printDebug)
-				printf("isCompatible called with types %s and %s.",
-                       NodeTypeNames[fType], NodeTypeNames[sType]);
+        if (printDebug)
+            printf("isCompatible called with types %s and %s.",
+                   NodeTypeNames[fType], NodeTypeNames[sType]);
 
-    switch (fType) {
-        default:
-            if (printDebug)
-                printf("isCompatible default called with types %s and %s\n",
-                       NodeTypeNames[fType], NodeTypeNames[sType]);
-            return 0;
-            break;
+        switch (fType) {
+            default:
+                if (printDebug)
+                    printf("isCompatible default called with types %s and %s\n",
+                           NodeTypeNames[fType], NodeTypeNames[sType]);
+                return 0;
+                break;
 
-				case NODE_LITERAL_REAL:
-				    if (sType == NODE_KW_FLOAT) vReturn= 1;
-				case NODE_LITERAL_INT:
-				    if ((sType == NODE_KW_INT) || (sType == NODE_KW_CHAR)) vReturn= 1;
-						break;
+            case NODE_LITERAL_REAL:
+                if (sType == NODE_KW_FLOAT)
+                    vReturn = 1;
+            case NODE_LITERAL_INT:
+                if ((sType == NODE_KW_INT) || (sType == NODE_KW_CHAR))
+                    vReturn = 1;
+                break;
+            case NODE_LITERAL_CHAR:
+                if ((sType == NODE_KW_INT) || (sType == NODE_KW_CHAR))
+                    vReturn = 1;
+                break;
 
-        case NODE_ADDITION:
-        case NODE_SUBTRACTION:
-        case NODE_MULTIPLICATION:
-        case NODE_DIVISION:
-            switch (sType) {
-                case NODE_KW_INT:
-                case NODE_KW_FLOAT:
-                case NODE_KW_CHAR:
-                    vReturn= 1;
-						break;
-                default:
-                    vReturn= 0;
-						break;
-            }
+            case NODE_ADDITION:
+            case NODE_SUBTRACTION:
+            case NODE_MULTIPLICATION:
+            case NODE_DIVISION:
+                switch (sType) {
+                    case NODE_KW_INT:
+                    case NODE_KW_FLOAT:
+                    case NODE_KW_CHAR:
+                        vReturn = 1;
+                        break;
+                    default:
+                        vReturn = 0;
+                        break;
+                }
 
-						break;
-        case NODE_LESS_THAN:
-        case NODE_GREATER_THAN:
-        case NODE_LOGICAL_OR:
-        case NODE_LOGICAL_AND:
-        case NODE_LESS_THAN_EQUAL:
-        case NODE_GREATER_THAN_EQUAL:
-        case NODE_EQUAL:
-        case NODE_NOT_EQUAL:
-            switch (sType) {
-                case NODE_KW_INT:
-                case NODE_KW_FLOAT:
-                case NODE_KW_CHAR:
-                case NODE_KW_BOOL:
-                    vReturn= 1;
-						break;
-                default:
-                    vReturn= 0;
-						break;
-            }
+                break;
+            case NODE_LESS_THAN:
+            case NODE_GREATER_THAN:
+            case NODE_LOGICAL_OR:
+            case NODE_LOGICAL_AND:
+            case NODE_LESS_THAN_EQUAL:
+            case NODE_GREATER_THAN_EQUAL:
+            case NODE_EQUAL:
+            case NODE_NOT_EQUAL:
+                switch (sType) {
+                    case NODE_KW_INT:
+                    case NODE_KW_FLOAT:
+                    case NODE_KW_CHAR:
+                    case NODE_KW_BOOL:
+                        vReturn = 1;
+                        break;
+                    default:
+                        vReturn = 0;
+                        break;
+                }
 
-        case NODE_LITERAL_TRUE:
-        case NODE_LITERAL_FALSE:
-        case NODE_KW_BOOL:
-            vReturn= ((sType == NODE_LITERAL_FALSE) || (sType == NODE_KW_BOOL) ||
-                    (sType == NODE_LITERAL_TRUE));
+            case NODE_LITERAL_TRUE:
+            case NODE_LITERAL_FALSE:
+            case NODE_KW_BOOL:
+                vReturn =
+                    ((sType == NODE_LITERAL_FALSE) || (sType == NODE_KW_BOOL) ||
+                     (sType == NODE_LITERAL_TRUE));
 
-						break;
+                break;
 
-        case NODE_LITERAL_STRING:
-            vReturn= 0;
-            break;
+            case NODE_LITERAL_STRING:
+                vReturn = 0;
+                break;
 
-        case NODE_VECTOR_TK:
-            vReturn= ((sType == NODE_VECTOR_INT) || (sType == NODE_VECTOR_TK) ||
-                    (sType == NODE_VECTOR_TK) || (sType == NODE_KW_CHAR));
+            case NODE_VECTOR_TK:
+                vReturn =
+                    ((sType == NODE_VECTOR_INT) || (sType == NODE_VECTOR_TK) ||
+                     (sType == NODE_VECTOR_TK) || (sType == NODE_KW_CHAR));
 
-						break;
-        case NODE_VECTOR_INT:
-            vReturn= ((sType == NODE_VECTOR_INT) || (sType == NODE_VECTOR_TK) ||
-                    (sType == NODE_KW_CHAR));
-						break;
+                break;
+            case NODE_VECTOR_INT:
+                vReturn =
+                    ((sType == NODE_VECTOR_INT) || (sType == NODE_VECTOR_TK) ||
+                     (sType == NODE_KW_CHAR));
+                break;
 
-        case NODE_KW_INT:
-            vReturn= ((sType == NODE_KW_CHAR) || (sType == NODE_VECTOR_TK) ||
-                    (sType == NODE_VECTOR_INT));
-
-						break;
-        case NODE_KW_FLOAT:
-	    vReturn= (sType == NODE_LITERAL_REAL);
-            // Float is only compatible with float
-            vReturn= 0;
-            break;
-        case NODE_KW_CHAR:
-            if (sType == NODE_KW_INT)
-                vReturn= 1;
-						break;
+            case NODE_KW_INT:
+                vReturn =
+                    ((sType == NODE_KW_CHAR) || (sType == NODE_VECTOR_TK) ||
+                     (sType == NODE_VECTOR_INT));
+                break;
+            case NODE_KW_FLOAT:
+                vReturn = (sType == NODE_LITERAL_REAL);
+                // Float is only compatible with float
+                vReturn = 0;
+                break;
+            case NODE_KW_CHAR:
+                if (sType == NODE_KW_INT)
+                    vReturn = 1;
+                break;
+        }
+        if (printDebug)
+            printf("Returning %d, %s\n", vReturn, vReturn ? "true" : "false");
     }
-			if (printDebug)
-		printf("Returning %d, %s\n",vReturn,vReturn?"true":"false");
-	
-		}
 }
 NodeType getType(ASTNode *node) {
     if (isLitType(node->astNodeType)) {
@@ -803,14 +830,14 @@ NodeType getType(ASTNode *node) {
             return getType(node->children[0]);
 
         case NODE_LITERAL_INT:
-						return NODE_KW_INT;
+            return NODE_KW_INT;
         case NODE_LITERAL_CHAR:
-						return NODE_KW_CHAR;
-				case NODE_LITERAL_FALSE:
-				case NODE_LITERAL_TRUE:
-						return NODE_KW_BOOL;
+            return NODE_KW_CHAR;
+        case NODE_LITERAL_FALSE:
+        case NODE_LITERAL_TRUE:
+            return NODE_KW_BOOL;
         case NODE_LITERAL_REAL:
-						return NODE_KW_FLOAT;
+            return NODE_KW_FLOAT;
 
         case NODE_VECTOR_TK:
         case NODE_VECTOR_INT:

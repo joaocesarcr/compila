@@ -1,10 +1,1 @@
-int a:1;
-int b:2;
-
-int main() {
-  while (true) {
-     b = b + b;
-  } 
-    a = a +a;
-  
-}
+int v2[10]: 'a'0 0 true 0'b'0 0 0 0;

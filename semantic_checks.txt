@@ -15,7 +15,7 @@ float f:2.5;		// 0.0 .0 0. are all allowed
 
 int main ()
   {
-  i= (false | ((2 + 5) < 5));
+  //i= (false | ((2 + 5) < 5));
   i = incn(b,b);
   undeclared = 2;
   number = 0;
@@ -65,6 +65,7 @@ int main ()
   a =  incn(a,b);
   a =  incn(a,b,d,e);
   }
+  int main() {}
 
 int incn (int x, int n )
   {
@@ -74,3 +75,4 @@ int incn (int x, int n )
   }
 
 // end of file
+  

@@ -56,8 +56,8 @@ void printNode(ASTNode *node, int level) {
         switch (node->astNodeType) {
             case NODE_FUNC_CALL:
                 printf("%s(", node->children[0]->hashNode->text);
-		printNode(node->children[1],0);
-                printf(")", node->children[0]->hashNode->text);
+                printNode(node->children[1], 0);
+                printf(")");
                 break;
             case NODE_FUNC_CALL_EMPTY:
                 printf("%s()", node->children[0]->hashNode->text);
@@ -67,9 +67,6 @@ void printNode(ASTNode *node, int level) {
                 break;
             case NODE_KW_CHAR:
                 printf("char ");
-                break;
-            case NODE_KW_READ:
-                printf("read");
                 break;
             case NODE_KW_INT:
                 printf("int ");
@@ -102,27 +99,15 @@ void printNode(ASTNode *node, int level) {
                        node->children[1]->hashNode->text);
                 break;
             case NODE_ASSIGNMENT:
-                printNode(node->children[0], 0);
+                printTree(node->children[0], 0);
                 printf(" = ");
-                printNode(node->children[1], 0);
+                printTree(node->children[1], 0);
                 break;
 
             case NODE_PARENTHESIS_EXPRESSION:
                 printf("(");
                 printNode(node->children[0], 0);
                 printf(")");
-                break;
-            case NODE_ADDITION:
-                printNode(node->children[0], 0);
-                printf(" + ");
-                printNode(node->children[1], 0);
-                // printOp(node, "+");
-                break;
-
-            case NODE_LOGICAL_OR:
-                printNode(node->children[0], 0);
-                printf(" | ");
-                printNode(node->children[1], 0);
                 break;
             case NODE_LITERAL_INT:
             case NODE_LITERAL_STRING:
@@ -137,7 +122,123 @@ void printNode(ASTNode *node, int level) {
             case NODE_LITERAL_TRUE:
                 printf("true");
                 break;
-            default:;
+            case NODE_KW_PRINT_STRING:
+                printf("print ");
+                printf("");
+                printTree(node->children[0], level);
+                printf(";\n");
+                printIndentation(level);
+                break;
+
+            case NODE_KW_PRINT:
+                printf("print ");
+                printTree(node->children[0], level);
+                printf(" ");
+                printTree(node->children[1], level);
+                printf(";\n");
+                printIndentation(level);
+                break;
+            case NODE_BLOCK_EMPTY:
+                printf("{}");
+                break;
+            case NODE_FUNC_DECLARATION_EMPTY:
+                printTree(node->children[0], level);
+                printTree(node->children[1], level);
+                printf("()\n");
+                printTree(node->children[3], level);
+                break;
+
+            case NODE_FUNC_DECLARATION:
+                printTree(node->children[0], level);
+                printf(" ");
+                printTree(node->children[1], level);
+                printf("(");
+                printTree(node->children[2], level);
+                printf(")\n");
+                printTree(node->children[3], level);
+                break;
+            case NODE_VAR_DECLARATION:
+                printTree(node->children[0], level);
+                printf(" ");
+                printTree(node->children[1], level);
+                printf(" :  ");
+                printTree(node->children[2], level);
+                printf(";\n");
+                printIndentation(level);
+                break;
+            case NODE_VECTOR_DECLARATION:
+                printTree(node->children[0], level);
+                printf(" ");
+                printTree(node->children[1], level);
+                printf("[");
+                printTree(node->children[2], level);
+                printf("]");
+                printf(";\n");
+                printIndentation(level);
+                break;
+
+            case NODE_VECTOR_DECLARATION_AND_ASIGN:
+                printTree(node->children[0], level);
+                printf(" ");
+                printTree(node->children[1], level);
+                printf("[");
+                printTree(node->children[2], level);
+                printf("]");
+                printf(" : ");
+                printTree(node->children[3], level);
+                printf(";\n");
+                printIndentation(level);
+                break;
+
+            case NODE_KW_RETURN:
+                printf("return ");
+                printTree(node->children[0], level);
+                printf(";\n");
+                printIndentation(level);
+                break;
+            case NODE_KW_WHILE:
+                printf("while (");
+                printTree(node->children[0], level);
+                printf(")\n");
+                printTree(node->children[1], level);
+                break;
+            case NODE_KW_READ:
+                printf("read ");
+                printTree(node->children[0], level);
+                printf(" ");
+                printTree(node->children[1], level);
+                printf(";\n");
+                printIndentation(level);
+                break;
+
+            case NODE_PARAM:
+                printTree(node->children[0], level);
+                printf(" ");
+                printTree(node->children[1], level);
+                break;
+
+            case NODE_VALUES_LIST:
+                printTree(node->children[0], level);
+                printf(" ");
+                printTree(node->children[1], level);
+                break;
+
+            case NODE_ADDITION:
+            case NODE_SUBTRACTION:
+            case NODE_MULTIPLICATION:
+            case NODE_DIVISION:
+            case NODE_LESS_THAN:
+            case NODE_GREATER_THAN:
+            case NODE_LOGICAL_OR:
+            case NODE_LOGICAL_AND:
+            case NODE_LESS_THAN_EQUAL:
+            case NODE_GREATER_THAN_EQUAL:
+            case NODE_EQUAL:
+            case NODE_NOT_EQUAL:
+                printOperation(node, level);
+                break;
+
+            default:
                 break;
         }
     }
@@ -151,7 +252,7 @@ void printTree(ASTNode *root, int level) {
 
     int toAdd = 0;
 
-    printNode(root, level);
+    //    printNode(root, level);
 
     switch (root->astNodeType) {
         case NODE_EMPTY:
@@ -164,6 +265,8 @@ void printTree(ASTNode *root, int level) {
 
         case NODE_PARAM_LIST: // FUNC DECLARATION ARGS
         case NODE_ARGS_LIST:  // FUNC CALLRGS
+            printArgList(root);
+            break;
             if (root->children[0]->astNodeType == NODE_EMPTY) {
                 break;
             } else {
@@ -174,30 +277,87 @@ void printTree(ASTNode *root, int level) {
                 }
             }
             break;
-
-        case NODE_FUNC_CALL_EMPTY:
-            printf("()");
+        case NODE_BLOCK:
+            printIndentation(level);
+            printf("{\n");
+            level++;
+            printIndentation(level);
+            printTree(root->children[0], level);
+            printf("\n");
+            level--;
+            printIndentation(level);
+            printf("}\n");
+            printIndentation(level);
             break;
 
         case NODE_FUNC_CALL:
-            printTree(root->children[0], level);
-            printf("(");
-            printTree(root->children[1], level);
+            printf("%s(", root->children[0]->hashNode->text);
+            printArgList(root->children[1]);
             printf(")");
             break;
-
+        case NODE_FUNC_CALL_EMPTY:
+            printf("%s()", root->children[0]->hashNode->text);
+            break;
+        case NODE_KW_CHAR:
+            printf("char ");
+            break;
+        case NODE_KW_INT:
+            printf("int ");
+            break;
+        case NODE_KW_FLOAT:
+            printf("float ");
+            break;
         case NODE_IF_CONTROL:
-            printf("if ");
-            printf("(");
-            printTree(root->children[0], level);
-            printf(")\n");
+            printf("if (");
+            printNode(root->children[0], level);
+            printf(")");
             printTree(root->children[1], level);
-            if (root->children[2] != NULL) {
-                printf("else ");
-                printTree(root->children[2], level);
-            }
+            printTree(root->children[2], level);
             break;
 
+        case NODE_ELSE:
+            printf("else ");
+            printTree(root->children[0], level + 1);
+            printf("");
+            break;
+
+        case NODE_KW_BOOL:
+            printf("bool ");
+            break;
+        case NODE_VECTOR_INT:
+            printf("%s[%d]", root->children[0]->hashNode->text,
+                   atoi(root->children[1]->hashNode->text));
+            break;
+        case NODE_VECTOR_TK:
+            printf("%s[%s]", root->children[0]->hashNode->text,
+                   root->children[1]->hashNode->text);
+            break;
+        case NODE_ASSIGNMENT:
+            printIndentation(level);
+            printTree(root->children[0], 0);
+            printf(" = ");
+            printTree(root->children[1], 0);
+            printf(";\n");
+            break;
+
+        case NODE_PARENTHESIS_EXPRESSION:
+            printf("(");
+            printNode(root->children[0], 0);
+            printf(")");
+            break;
+        case NODE_LITERAL_INT:
+        case NODE_LITERAL_STRING:
+        case NODE_TOKEN_IDENTIFIER:
+        case NODE_LITERAL_CHAR:
+        case NODE_LITERAL_REAL:
+            printf("%s", root->hashNode->text);
+            break;
+        case NODE_LITERAL_FALSE:
+            printf("false");
+            break;
+        case NODE_LITERAL_TRUE:
+            printf("true");
+            break;
         case NODE_KW_PRINT_STRING:
             printf("print ");
             printf("");
@@ -218,18 +378,15 @@ void printTree(ASTNode *root, int level) {
         case NODE_BLOCK_EMPTY:
             printf("{}");
             break;
-        case NODE_BLOCK:
-            printIndentation(level);
-            printf("{\n");
-            level++;
-            printIndentation(level);
+        case NODE_FUNC_DECLARATION_EMPTY:
             printTree(root->children[0], level);
-            printf("\n");
-            level--;
-            printIndentation(level);
-            printf("}\n");
-            printIndentation(level);
+            printf(" ");
+            printTree(root->children[1], level);
+            printf("(");
+            printf(")\n");
+            printTree(root->children[3], level);
             break;
+
         case NODE_FUNC_DECLARATION:
             printTree(root->children[0], level);
             printf(" ");
@@ -243,19 +400,11 @@ void printTree(ASTNode *root, int level) {
             printTree(root->children[0], level);
             printf(" ");
             printTree(root->children[1], level);
-            printf(" :  ");
+            printf(":");
             printTree(root->children[2], level);
             printf(";\n");
             printIndentation(level);
             break;
-        case NODE_VECTOR_INT:
-        case NODE_VECTOR_TK:
-            printTree(root->children[0], level);
-            printf("[");
-            printTree(root->children[1], level);
-            printf("]");
-            break;
-
         case NODE_VECTOR_DECLARATION:
             printTree(root->children[0], level);
             printf(" ");
@@ -305,14 +454,6 @@ void printTree(ASTNode *root, int level) {
             printTree(root->children[0], level);
             printf(" ");
             printTree(root->children[1], level);
-            break;
-
-        case NODE_ASSIGNMENT:
-            printTree(root->children[0], level);
-            printf(" = ");
-            printTree(root->children[1], level);
-            printf(";\n");
-            printIndentation(level);
             break;
 
         case NODE_VALUES_LIST:
@@ -368,7 +509,7 @@ void printOperation(ASTNode *node, int level) {
             printf(" > ");
             break;
         case NODE_LOGICAL_OR:
-            printf(" || ");
+            printf(" | ");
             break;
         case NODE_LOGICAL_AND:
             printf(" && ");
@@ -399,10 +540,13 @@ void printNodeOLD(ASTNode *node) {
     printf("%p ", node);
     switch (node->astNodeType) {
         case NODE_FUNC_CALL:
-            printf("%s(...)\n", node->children[0]->hashNode
-                                    ? node->children[0]->hashNode->text
-                                    : "NULL");
+            printf("%s(", node->children[0]->hashNode
+                              ? node->children[0]->hashNode->text
+                              : "NULL");
 
+            if (node->children[1])
+                printArgList(node->children[1]);
+            printf(")\n");
             break;
         case NODE_FUNC_CALL_EMPTY:
             printf("%s()\n", node->children[0]->hashNode
@@ -508,5 +652,19 @@ void printOp(ASTNode *node) {
                 break;
         }
         printNode(node->children[1], 0);
+    }
+}
+
+void printArgList(ASTNode *node) {
+    if ((node->astNodeType != NODE_ARGS_LIST) &&
+        (node->astNodeType != NODE_PARAM_LIST)) {
+        printf("ERROR. Trying to print ArgList but node is not "
+               "NODE_ARGS_LIST. Got %s instead\n",
+               NodeTypeNames[node->astNodeType]);
+    }
+    printNode(node->children[0], 0);
+    if (node->children[1]) {
+        printf(",");
+        printArgList(node->children[1]);
     }
 }

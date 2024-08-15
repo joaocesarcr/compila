@@ -93,6 +93,7 @@ void printIndentation(int level);
 
 void printNodeOLD(ASTNode *node);
 void printTreeOLD(ASTNode *root, int level);
+void printArgList(ASTNode *node);
 
 const char *NodeTypeNames[] = {
     "NODE_PROGRAM",
