@@ -1,0 +1,10 @@
+int i:1;
+int main ()
+{
+  if (i==100) {
+    print "Nao tem como isso...\n";
+  }
+  else  
+    print "OK!\n"; 
+  
+}

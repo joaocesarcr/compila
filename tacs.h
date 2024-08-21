@@ -25,6 +25,9 @@ typedef enum {
     TAC_NOT_EQUAL,
     TAC_COPY,
     TAC_PRINT,
+    TAC_FUNC_BEGIN,
+    TAC_FUNC_END,
+    TAC_READ,
 } TacType;
 
 const char *TacTypeNames[] = {
@@ -49,6 +52,9 @@ const char *TacTypeNames[] = {
     "TAC_NOT_EQUAL",
     "TAC_COPY",
     "TAC_PRINT",
+    "TAC_FUNC_BEGIN",
+    "TAC_FUNC_END",
+    "TAC_READ",
 };
 
 typedef struct sTac_node {
@@ -70,4 +76,5 @@ TAC *generateCode(ASTNode *node);
 TAC *tacGenOp(TacType OP, TAC *c1, TAC *c2);
 TAC *makeIfThenElse(TAC *c0, TAC *c1, TAC *c2);
 TAC *makeWhile(TAC *c0, TAC *c1);
+TAC *makeFuncDec(TAC *c0, TAC *c1, TAC *c2, TAC *c3, HASH_NODE *name);
 #endif

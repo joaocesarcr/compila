@@ -65,11 +65,11 @@ extern void check_and_set_declarations(ASTNode *node);
 
 
 programa: lista_declaracoes { root = createNode(NODE_PROGRAM, (ASTNode*[]){$1, NULL}, NULL);
-        //printTreeOLD(root,0);
+        printTreeOLD(root,0);
         //printAST(root); // Etapa 3
         checkSemantic(root);
-        tacPrintBackwards(generateCode(root));
         hashPrint();
+        tacPrintBackwards(generateCode(root));
         /*
         printTreeOLD(root,0);
         check_and_set_declarations(root);
@@ -208,9 +208,8 @@ controle_fluxo: KW_IF '(' expressao ')' comando controle_fluxo_if { $$ = createN
     | KW_WHILE '(' expressao ')' bloco { $$ = createNode(NODE_KW_WHILE, (ASTNode*[]){$3, $5, NULL}, NULL); }
     ;
 
-controle_fluxo_if: { $$ = NULL;}
-    | KW_ELSE comando { $$ = createNode(NODE_ELSE,(ASTNode*[]){$2,NULL},NULL) ; }
-    ;
+controle_fluxo_if: KW_ELSE comando {printf("kw_else found"); $$ = createNode(NODE_ELSE,(ASTNode*[]){$2,NULL},NULL) ; }
+                 | /* empty */ { printf("if without else");$$ = NULL;};
 
 expressao: expressao '+' expressao { $$ = createNode(NODE_ADDITION, (ASTNode*[]){$1, $3, NULL}, NULL); }
          | expressao '-' expressao { $$ = createNode(NODE_SUBTRACTION, (ASTNode*[]){$1, $3, NULL}, NULL); }
