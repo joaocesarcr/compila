@@ -312,13 +312,16 @@ void printTree(ASTNode *root, int level) {
             printNode(root->children[0], level);
             printf(")");
             printTree(root->children[1], level);
-            printTree(root->children[2], level);
             break;
 
         case NODE_KW_IF_ELSE:
+            printf("if (");
+            printNode(root->children[0], level);
+            printf(")");
+            printTree(root->children[1], level);
+
             printf("else ");
-            printTree(root->children[0], level + 1);
-            printf("");
+            printTree(root->children[2], level);
             break;
 
         case NODE_KW_BOOL:
@@ -582,7 +585,6 @@ void printNodeOLD(ASTNode *node) {
             break;
             */
 
-        // Add cases for other node types if necessary
         default:
             printf("NodeType: %s\n", NodeTypeNames[node->astNodeType]);
             break;

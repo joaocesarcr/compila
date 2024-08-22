@@ -7,14 +7,14 @@
 # and #include "main.c" in the last part of the scanner.l
 #
 
-etapa4: lex.yy.c
+etapa5: lex.yy.c
 	yacc -d parser.y 
-	gcc -o  etapa4 lex.yy.c -g
+	gcc -o  etapa5 lex.yy.c -g
 
 lex.yy.c: scanner.l
 	lex scanner.l 
 
 clean:
-	rm -rf lex.yy.c etapa4 y.tab.h y.tab.c ast.o y.output etapa4.dSYM/ *.o
+	rm -rf lex.yy.c etapa5 y.tab.h y.tab.c ast.o y.output etapa5.dSYM/ *.o
 
-remake: clean etapa4
+remake: clean etapa5

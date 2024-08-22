@@ -3,7 +3,7 @@
  * João César de Paula Criscolo  - 00304342
  * Prof. Marcelo Johann
 */
-
+#include <signal.h>
 #include "ast.h"
 #include "utils.h"
 #include "hash.h"
@@ -27,7 +27,7 @@ extern void check_and_set_declarations(ASTNode *node);
 
 %type <astnode> programa lista_declaracoes declaracao declaracao_variavel declaracao_vetor declaracao_funcao
 %type <astnode> lista_parametros parametro tipo valor_inicial valores_iniciais bloco lista_comandos
-%type <astnode> comando atribuicao vetor controle_fluxo  expressao chamada_funcao lista_chamada
+%type <astnode> comando atribuicao vetor controle_fluxo  expressao chamada_funcao lista_chamada 
 
 %token <token> KW_CHAR           
 %token <token> KW_INT            
@@ -57,19 +57,20 @@ extern void check_and_set_declarations(ASTNode *node);
 %left '*' '/'
 %left '<' '>' OPERATOR_DIF OPERATOR_EQ OPERATOR_GE OPERATOR_LE
 %left '&' '|'
-%left KW_IF
-%right LOWER_THAN_ELSE ELSE
-
+%right KW_ELSE 
 %start programa
+
 %%
 
 
 programa: lista_declaracoes { root = createNode(NODE_PROGRAM, (ASTNode*[]){$1, NULL}, NULL);
-        printTreeOLD(root,0);
-        //printAST(root); // Etapa 3
-        checkSemantic(root);
+
         hashPrint();
-        tacPrintBackwards(generateCode(root));
+        printTreeOLD(root,0);
+        printAST(root); // Etapa 3
+        printf("setting br\n");
+        checkSemantic(root); // Etapa 4
+        //tacPrintBackwards(generateCode(root));
         /*
         printTreeOLD(root,0);
         check_and_set_declarations(root);
@@ -204,10 +205,11 @@ vetor: TK_IDENTIFIER '[' LIT_INT ']' { $$ = createNode(NODE_VECTOR_INT, (ASTNode
                                                                                NULL); }
      ;
 
-controle_fluxo: KW_IF '(' expressao ')' comando  { $$ = createNode(NODE_KW_IF,(ASTNode*[]){$3, $5, NULL,NULL,NULL},NULL); }
-    | KW_IF '(' expressao ')' comando KW_ELSE comando  { $$ = createNode(NODE_KW_IF_ELSE,(ASTNode*[]){$3, $5, $7,NULL,NULL},NULL); }
+controle_fluxo:  KW_IF '(' expressao ')' comando  { $$ = createNode(NODE_KW_IF, (ASTNode*[]){$3, $5, NULL, NULL, NULL}, NULL); printf("adding KW_IF\n"); }
+    | KW_IF '(' expressao ')' comando KW_ELSE comando { $$ = createNode(NODE_KW_IF_ELSE, (ASTNode*[]){$3, $5, $7, NULL, NULL}, NULL);  printf("adding KW_IF_ELSE\n");}
     | KW_WHILE '(' expressao ')' bloco { $$ = createNode(NODE_KW_WHILE, (ASTNode*[]){$3, $5, NULL}, NULL); }
     ;
+
 
 expressao: expressao '+' expressao { $$ = createNode(NODE_ADDITION, (ASTNode*[]){$1, $3, NULL}, NULL); }
          | expressao '-' expressao { $$ = createNode(NODE_SUBTRACTION, (ASTNode*[]){$1, $3, NULL}, NULL); }
@@ -257,4 +259,6 @@ int yyerror(char* s) {
   fprintf(stderr,"Syntax error in line %d\n", getLineNumber());
   exit(3);
   return 1;
+
 }
+

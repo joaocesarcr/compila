@@ -75,20 +75,21 @@ TAC *generateCode(ASTNode *node) {
             // return tacGenFunc(code[0], code[1]);
             result = tacCreate(TAC_FUNC_CALL,makeTemp(),node->hashNode,
             break;
-            */
 
         case NODE_KW_RETURN:
             result = makeReturn();
 
-        case NODE_KW_READ:
-            result = tacCreate(TAC_READ, node->children[1]->hashNode, 0, 0);
-            break;
+            */
+
         case NODE_FUNC_DECLARATION:
         case NODE_FUNC_DECLARATION_EMPTY:
             result = makeFuncDec(code[0], code[1], code[2], code[3],
                                  node->children[1]->hashNode);
             break;
 
+        case NODE_KW_READ:
+            result = tacCreate(TAC_READ, node->children[1]->hashNode, 0, 0);
+            break;
         case NODE_KW_PRINT:
         case NODE_KW_PRINT_STRING:
             result = tacCreate(TAC_PRINT,
@@ -264,6 +265,7 @@ TAC *makeWhile(TAC *c0, TAC *c1) {
 
 TAC *makeFuncCall(TAC *c0, TAC *c1) {
     //
+    return 0;
 }
 TAC *makeFuncDec(TAC *c0, TAC *c1, TAC *c2, TAC *c3, HASH_NODE *name) {
     TAC *beginFun = 0;
@@ -277,7 +279,7 @@ TAC *makeFuncDec(TAC *c0, TAC *c1, TAC *c2, TAC *c3, HASH_NODE *name) {
 
     beginFun = tacCreate(TAC_FUNC_BEGIN, beginFunNode, name, 0);
     endFun = tacCreate(TAC_FUNC_END, endFunNode, 0, 0);
-    return tacJoin(tacJoin(beginFun, c3), endFun);
+    return tacJoin(tacJoin(tacJoin(beginFun, c3), endFun), c1);
 }
 
 /*
