@@ -28,6 +28,8 @@ typedef enum {
     TAC_FUNC_BEGIN,
     TAC_FUNC_END,
     TAC_READ,
+    TAC_RETURN,
+    TAC_FUNC_CALL,
 } TacType;
 
 const char *TacTypeNames[] = {
@@ -55,6 +57,8 @@ const char *TacTypeNames[] = {
     "TAC_FUNC_BEGIN",
     "TAC_FUNC_END",
     "TAC_READ",
+    "TAC_RETURN",
+    "TAC_FUNC_CALL",
 };
 
 typedef struct sTac_node {
@@ -77,5 +81,5 @@ TAC *tacGenOp(TacType OP, TAC *c1, TAC *c2);
 TAC *makeIfThenElse(TAC *c0, TAC *c1, TAC *c2);
 TAC *makeWhile(TAC *c0, TAC *c1);
 TAC *makeFuncDec(TAC *c0, TAC *c1, TAC *c2, TAC *c3, HASH_NODE *name);
-TAC *makeFuncCall(TAC *c0, TAC *c1, TAC *c2, TAC *c3, HASH_NODE *name);
+TAC *makeFuncCall(TAC *var, HASH_NODE *node);
 #endif

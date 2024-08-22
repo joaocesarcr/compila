@@ -68,18 +68,18 @@ TAC *generateCode(ASTNode *node) {
             break;
 
             /*
+            */
         case NODE_FUNC_CALL:
         case NODE_FUNC_CALL_EMPTY:
-            // JUMP TO FUNCTION
-            // mas e o return?
-            // return tacGenFunc(code[0], code[1]);
-            result = tacCreate(TAC_FUNC_CALL,makeTemp(),node->hashNode,
+            result = makeFuncCall(0,node->children[0]->hashNode);
             break;
 
         case NODE_KW_RETURN:
-            result = makeReturn();
-
-            */
+            result = tacJoin(code[0],tacCreate(TAC_RETURN, 
+			    code[0]->res ? code[0]->res
+                                              : 0,
+                               0, 0));
+	    break;
 
         case NODE_FUNC_DECLARATION:
         case NODE_FUNC_DECLARATION_EMPTY:
@@ -272,6 +272,7 @@ TAC *makeWhile(TAC *c0, TAC *c1) {
 TAC *makeFuncDec(TAC *c0, TAC *c1, TAC *c2, TAC *c3, HASH_NODE *name) {
     TAC *beginFun = 0;
     TAC *endFun = 0;
+    TAC *jumpToEnd = 0;
 
     HASH_NODE *beginFunNode = 0;
     HASH_NODE *endFunNode = 0;
@@ -279,18 +280,33 @@ TAC *makeFuncDec(TAC *c0, TAC *c1, TAC *c2, TAC *c3, HASH_NODE *name) {
     beginFunNode = makeLabel();
     endFunNode = makeLabel();
 
+    jumpToEnd = tacCreate(TAC_JMP, endFunNode, name, 0);
     beginFun = tacCreate(TAC_FUNC_BEGIN, beginFunNode, name, 0);
     endFun = tacCreate(TAC_FUNC_END, endFunNode, 0, 0);
-    return tacJoin(tacJoin(tacJoin(beginFun, c3), endFun), c1);
+    if (strcmp(name->text,"main")) {
+	    printf("name: %s\n",name);
+	    return tacJoin(tacJoin(tacJoin(tacJoin(jumpToEnd, beginFun), c3), endFun), c1);
+    }
+    else 
+	    return tacJoin(tacJoin(tacJoin(beginFun, c3), endFun), c1);
 }
 
-TAC *makeFuncCall(TAC *c0, TAC *c1, TAC *c2, TAC *c3, HASH_NODE *name) {
+TAC *makeFuncCall(TAC *var, HASH_NODE *node) {
+    TAC *jumpTo, *returnTo;
+    HASH_NODE *returnToNode;
+
+    returnToNode = makeLabel();
+    jumpTo = tacCreate(TAC_FUNC_CALL,0,node,0);
+    return jumpTo;
+
+
     /*
      *
     i = incn(1,1)
-    TAC(TAC_FUNC_CALL,makeTemp,0,0);
+    TAC(TAC_FUNC_CALL,makeTempReturn,0,0);
     TAC(TAC_JMP, TAC_FUNC_BEGIN_LABEL,0,0);
     TAC(TAC_LABEL,After_Call,0,0);
+    TAC(TAC_COPY,i,makeTempReturn,0);
      */
     return 0;
 }
@@ -318,3 +334,14 @@ TAC *makeFuncCall(TAC *c0, TAC *c1, TAC *c2, TAC *c3, HASH_NODE *name) {
 
     TAC(TAC_FUNC_END,lLLlLIabel_4,0,0);
  */
+
+TAC *makeReturn(TAC *var, HASH_NODE *node) {
+}
+
+// Etapa 5
+// Tipos no print
+// Func call
+// Remover label chamada de funcao
+// Escrita de vetores
+// Etapa 3
+// Etapa 4
