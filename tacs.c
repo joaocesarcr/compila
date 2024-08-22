@@ -116,6 +116,12 @@ TAC *generateCode(ASTNode *node) {
         case NODE_TOKEN_IDENTIFIER:
             result = tacCreate(TAC_SYMBOL, node->hashNode, 0, 0);
             break;
+        case NODE_VAR_DECLARATION:
+            result = tacJoin(code[2],
+                             tacCreate(TAC_COPY, node->children[1]->hashNode,
+                                       code[2] ? code[2]->res : 0, 0));
+            break;
+
         case NODE_ASSIGNMENT:
             result = tacJoin(code[1],
                              tacCreate(TAC_COPY, node->children[0]->hashNode,
@@ -263,10 +269,6 @@ TAC *makeWhile(TAC *c0, TAC *c1) {
   TAC(TAC_LABEL,labelWhileEnd,0,0);// labelWhileEnd
   */
 
-TAC *makeFuncCall(TAC *c0, TAC *c1) {
-    //
-    return 0;
-}
 TAC *makeFuncDec(TAC *c0, TAC *c1, TAC *c2, TAC *c3, HASH_NODE *name) {
     TAC *beginFun = 0;
     TAC *endFun = 0;
@@ -280,6 +282,17 @@ TAC *makeFuncDec(TAC *c0, TAC *c1, TAC *c2, TAC *c3, HASH_NODE *name) {
     beginFun = tacCreate(TAC_FUNC_BEGIN, beginFunNode, name, 0);
     endFun = tacCreate(TAC_FUNC_END, endFunNode, 0, 0);
     return tacJoin(tacJoin(tacJoin(beginFun, c3), endFun), c1);
+}
+
+TAC *makeFuncCall(TAC *c0, TAC *c1, TAC *c2, TAC *c3, HASH_NODE *name) {
+    /*
+     *
+    i = incn(1,1)
+    TAC(TAC_FUNC_CALL,makeTemp,0,0);
+    TAC(TAC_JMP, TAC_FUNC_BEGIN_LABEL,0,0);
+    TAC(TAC_LABEL,After_Call,0,0);
+     */
+    return 0;
 }
 
 /*

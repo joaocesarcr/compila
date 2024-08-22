@@ -57,18 +57,16 @@ extern void check_and_set_declarations(ASTNode *node);
 %left '*' '/'
 %left '<' '>' OPERATOR_DIF OPERATOR_EQ OPERATOR_GE OPERATOR_LE
 %left '&' '|'
-%right KW_ELSE 
+%left KW_ELSE 
 %start programa
 
 %%
 
 
 programa: lista_declaracoes { root = createNode(NODE_PROGRAM, (ASTNode*[]){$1, NULL}, NULL);
-
-        hashPrint();
-        printTreeOLD(root,0);
-        printAST(root); // Etapa 3
-        printf("setting br\n");
+        //hashPrint();
+        //printTreeOLD(root,0);
+        //printAST(root); // Etapa 3
         checkSemantic(root); // Etapa 4
         //tacPrintBackwards(generateCode(root));
         /*
@@ -205,8 +203,8 @@ vetor: TK_IDENTIFIER '[' LIT_INT ']' { $$ = createNode(NODE_VECTOR_INT, (ASTNode
                                                                                NULL); }
      ;
 
-controle_fluxo:  KW_IF '(' expressao ')' comando  { $$ = createNode(NODE_KW_IF, (ASTNode*[]){$3, $5, NULL, NULL, NULL}, NULL); printf("adding KW_IF\n"); }
-    | KW_IF '(' expressao ')' comando KW_ELSE comando { $$ = createNode(NODE_KW_IF_ELSE, (ASTNode*[]){$3, $5, $7, NULL, NULL}, NULL);  printf("adding KW_IF_ELSE\n");}
+controle_fluxo:  KW_IF '(' expressao ')' comando  { $$ = createNode(NODE_KW_IF, (ASTNode*[]){$3, $5, NULL, NULL, NULL}, NULL); }
+    | KW_IF '(' expressao ')' comando KW_ELSE comando { $$ = createNode(NODE_KW_IF_ELSE, (ASTNode*[]){$3, $5, $7, NULL, NULL}, NULL);}
     | KW_WHILE '(' expressao ')' bloco { $$ = createNode(NODE_KW_WHILE, (ASTNode*[]){$3, $5, NULL}, NULL); }
     ;
 

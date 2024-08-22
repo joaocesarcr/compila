@@ -77,4 +77,5 @@ TAC *tacGenOp(TacType OP, TAC *c1, TAC *c2);
 TAC *makeIfThenElse(TAC *c0, TAC *c1, TAC *c2);
 TAC *makeWhile(TAC *c0, TAC *c1);
 TAC *makeFuncDec(TAC *c0, TAC *c1, TAC *c2, TAC *c3, HASH_NODE *name);
+TAC *makeFuncCall(TAC *c0, TAC *c1, TAC *c2, TAC *c3, HASH_NODE *name);
 #endif
