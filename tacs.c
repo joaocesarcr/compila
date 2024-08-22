@@ -73,9 +73,12 @@ TAC *generateCode(ASTNode *node) {
             // JUMP TO FUNCTION
             // mas e o return?
             // return tacGenFunc(code[0], code[1]);
-            result = makeFuncCall(code[0], code[1]);
+            result = tacCreate(TAC_FUNC_CALL,makeTemp(),node->hashNode,
             break;
             */
+
+        case NODE_KW_RETURN:
+            result = makeReturn();
 
         case NODE_KW_READ:
             result = tacCreate(TAC_READ, node->children[1]->hashNode, 0, 0);
@@ -95,11 +98,11 @@ TAC *generateCode(ASTNode *node) {
 
             break;
 
-        case NODE_IF_CONTROL:
-            if (!node->children[2])
-                result = makeIfThen(code[0], code[1]);
-            else
-                result = makeIfThenElse(code[0], code[1], code[2]);
+        case NODE_KW_IF:
+            result = makeIfThen(code[0], code[1]);
+            break;
+        case NODE_KW_IF_ELSE:
+            result = makeIfThenElse(code[0], code[1], code[2]);
             break;
         case NODE_KW_WHILE:
             result = makeWhile(code[0], code[1]);
@@ -276,3 +279,27 @@ TAC *makeFuncDec(TAC *c0, TAC *c1, TAC *c2, TAC *c3, HASH_NODE *name) {
     endFun = tacCreate(TAC_FUNC_END, endFunNode, 0, 0);
     return tacJoin(tacJoin(beginFun, c3), endFun);
 }
+
+/*
+    TAC(TAC_FUNC_CALL,labelX,0,0);
+
+    TAC(TAC_FUNC_BEGIN,lLLlLIabel_3,main,0);
+    TAC(TAC_LABEL,lLLlLIabel_2,0,0);
+    TAC(TAC_DIVIDE,lIlIlIlIlTemp_0,n,2);
+    TAC(TAC_LESS_THAN_EQUAL,lIlIlIlIlTemp_1,i,lIlIlIlIlTemp_0);
+    TAC(TAC_JUMP_ZERO,lLLlLIabel_1,lIlIlIlIlTemp_1,0);
+    TAC(TAC_MULTIPLY,lIlIlIlIlTemp_2,i,i);
+    TAC(TAC_EQUAL,lIlIlIlIlTemp_3,lIlIlIlIlTemp_2,16);
+    TAC(TAC_JUMP_ZERO,lLLlLIabel_0,lIlIlIlIlTemp_3,0);
+    TAC(TAC_LABEL,lLLlLIabel_0,0,0);
+    TAC(TAC_ADD,lIlIlIlIlTemp_4,i,1);
+    TAC(TAC_COPY,i,lIlIlIlIlTemp_4,0);
+    TAC(TAC_JMP,lLLlLIabel_2,0,0);
+    TAC(TAC_LABEL,lLLlLIabel_1,0,0);
+    TAC(TAC_RET, returnvar, oqvemdpsdereturn,0);
+
+    TAC(TAC_COPY, labelX, oqvemdpsdereturn,0);
+    TAC(TAC_JMP,afterFuncCall,0,0);
+
+    TAC(TAC_FUNC_END,lLLlLIabel_4,0,0);
+ */

@@ -27,7 +27,7 @@ extern void check_and_set_declarations(ASTNode *node);
 
 %type <astnode> programa lista_declaracoes declaracao declaracao_variavel declaracao_vetor declaracao_funcao
 %type <astnode> lista_parametros parametro tipo valor_inicial valores_iniciais bloco lista_comandos
-%type <astnode> comando atribuicao vetor controle_fluxo controle_fluxo_if expressao chamada_funcao lista_chamada
+%type <astnode> comando atribuicao vetor controle_fluxo  expressao chamada_funcao lista_chamada
 
 %token <token> KW_CHAR           
 %token <token> KW_INT            
@@ -204,12 +204,10 @@ vetor: TK_IDENTIFIER '[' LIT_INT ']' { $$ = createNode(NODE_VECTOR_INT, (ASTNode
                                                                                NULL); }
      ;
 
-controle_fluxo: KW_IF '(' expressao ')' comando controle_fluxo_if { $$ = createNode(NODE_IF_CONTROL,(ASTNode*[]){$3, $5, $6,NULL,NULL},NULL); }
+controle_fluxo: KW_IF '(' expressao ')' comando  { $$ = createNode(NODE_KW_IF,(ASTNode*[]){$3, $5, NULL,NULL,NULL},NULL); }
+    | KW_IF '(' expressao ')' comando KW_ELSE comando  { $$ = createNode(NODE_KW_IF_ELSE,(ASTNode*[]){$3, $5, $7,NULL,NULL},NULL); }
     | KW_WHILE '(' expressao ')' bloco { $$ = createNode(NODE_KW_WHILE, (ASTNode*[]){$3, $5, NULL}, NULL); }
     ;
-
-controle_fluxo_if: KW_ELSE comando {printf("kw_else found"); $$ = createNode(NODE_ELSE,(ASTNode*[]){$2,NULL},NULL) ; }
-                 | /* empty */ { printf("if without else");$$ = NULL;};
 
 expressao: expressao '+' expressao { $$ = createNode(NODE_ADDITION, (ASTNode*[]){$1, $3, NULL}, NULL); }
          | expressao '-' expressao { $$ = createNode(NODE_SUBTRACTION, (ASTNode*[]){$1, $3, NULL}, NULL); }

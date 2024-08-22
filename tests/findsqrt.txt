@@ -1,0 +1,12 @@
+int i:0;
+int n:16;
+
+int main() {
+  while(i <= (n / 2)) {
+    if ((i * i) == 16) {
+      return i;
+    }
+    i = i + 1;
+  }
+  return 0;
+}

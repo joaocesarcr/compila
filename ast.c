@@ -74,7 +74,7 @@ void printNode(ASTNode *node, int level) {
             case NODE_KW_FLOAT:
                 printf("float ");
                 break;
-            case NODE_IF_CONTROL:
+            case NODE_KW_IF:
                 printf("if (");
                 printNode(node->children[0], 0);
                 printf(")");
@@ -83,9 +83,9 @@ void printNode(ASTNode *node, int level) {
                 printf("if (");
                 printNode(node->children[0], 0);
                 printf(")");
-                printf("else (");
+                printf("else ");
                 printNode(node->children[1], 0);
-                printf(")");
+                printf("");
 
             case NODE_KW_BOOL:
                 printf("bool ");
@@ -307,7 +307,7 @@ void printTree(ASTNode *root, int level) {
         case NODE_KW_FLOAT:
             printf("float ");
             break;
-        case NODE_IF_CONTROL:
+        case NODE_KW_IF:
             printf("if (");
             printNode(root->children[0], level);
             printf(")");
@@ -315,7 +315,7 @@ void printTree(ASTNode *root, int level) {
             printTree(root->children[2], level);
             break;
 
-        case NODE_ELSE:
+        case NODE_KW_IF_ELSE:
             printf("else ");
             printTree(root->children[0], level + 1);
             printf("");
